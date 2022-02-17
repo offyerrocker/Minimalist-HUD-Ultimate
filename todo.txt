@@ -1,5 +1,20 @@
 
-hud concepts:
+- every 5 minutes, a new hud element appears
+- favor elements that have not been picked (sort by tag)
+
+
+
+hud element categories:
+	- health
+	- ammo
+	- armor
+	- teammates
+	
+
+
+
+
+hud concepts list:
 
 
 general concepts:
@@ -8,20 +23,40 @@ general concepts:
 	miyamoto and gunicorn (rdr horse)
 	the division
 	clippy
-
+	subnautica 
+	dishonored
+	gungeon
+	gtfo
+	hunt showdown
+	icarus?
+	noita
+	terraria?
+	l4d/other source games?
+	apex legends?
+	don't starve together
+	helltaker
+	talos principle
+	rainbow 6 siege
+	
+from the video: https://www.youtube.com/watch?v=jAymJW63PLk
+	duke nukem
+	
 new elements:
+	"chalice requires runes"
 	persona 4 date/time
 	ffxiv team counter
 	smb64 lives counter
 	halo ce ammo counter?
 	tf2 mission timer
-
+	dark souls "you died"
+	runescape inventory
+	
 returning elements:
 	tf2 health
 	lego star wars character
 	fallout 3 vats
 
 undecided:
-lego star wars stud counter for money?
-	- relies on upper money limit
+	lego star wars stud counter for money?
+		- con: relies on upper money limit
 	
