@@ -1,93 +1,12 @@
-<mod name="Minimalist HUD Ultimate" author="Offyerrocker" color="Color(0.6,0.9,1)">
+<mod name="Minimalist HUD Ultimate" author="Offyerrocker" color="Color(0.6,0.9,1)" global_key="MHUDUCore" core_class="MHUDUCore.lua">
 	<Localization directory="localization" default="en.json">
 		<loc file="en.json" language="english" />
 	</Localization>
 	
 	<AssetUpdates id="36309" version="0.0.1" provider="modworkshop" install_directory = "mods/"/>
-	<!--
 	<AddFiles directory="assets">
-		<font path="fonts/hl2" load="true" unload="false" />
-		<texture path="fonts/hl2" />
 		<font path="fonts/myriad_pro" load="true" unload="false" />
 		<texture path="fonts/myriad_pro" />
-		<font path="fonts/tf2" load="true" unload="false" />
-		<texture path="fonts/tf2" />
-		<font path="fonts/tf2_build" load="true" unload="false" />
-		<texture path="fonts/tf2_build" />
-		<font path="fonts/retro_computer" load="true" unload="false" />
-		<texture path="fonts/retro_computer" />
-		<font path="fonts/monofonto" load="true" unload="false" />
-		<texture path="fonts/monofonto" />
-		<font path="fonts/minecraftia" load="true" unload="false" />
-		<texture path="fonts/minecraftia" />
-		<font path="fonts/font_eurostile" load="true" unload="false" />
-		<texture path="fonts/font_eurostile" />
-		<font path="fonts/pricedown" load="true" unload="false" />
-		<texture path="fonts/pricedown" />
-		<font path="fonts/pricedown_outline" load="true" unload="false" />
-		<texture path="fonts/pricedown_outline" />
-		<font path="fonts/stardew" load="true" unload="false" />
-		<texture path="fonts/stardew" />
-		<font path="fonts/stardew_thick" load="true" unload="false" />
-		<texture path="fonts/stardew_thick" />
-		<font path="fonts/upheaval" load="true" unload="false" />
-		<texture path="fonts/upheaval" />
-		<font path="fonts/grotesk_bold" load="true" unload="false" />
-		<texture path="fonts/grotesk_bold" />
-		<font path="fonts/grotesk_normal" load="true" unload="false" />
-		<texture path="fonts/grotesk_normal" />
-		<font path="fonts/cromwell_nf" load="true" unload="false" />
-		<texture path="fonts/cromwell_nf" />
-		<font path="fonts/coderscrux" load="true" unload="false" />
-		<texture path="fonts/coderscrux" />
-		<font path="fonts/justice" load="true" unload="false" />
-		<texture path="fonts/justice" />
-		
-		<texture path="textures/vats_overlay"/>
-		<texture path="textures/vats_overlay_center"/>
-		<texture path="textures/vats_bg"/>
-		<texture path="textures/minecraft_hotbar"/>
-		<texture path="textures/minecraft_xp_full"/>
-		<texture path="textures/minecraft_xp_empty"/>
-		<texture path="textures/minecraft_atlas"/>
-		<texture path="textures/tf2_health_fill"/>
-		<texture path="textures/tf2_health_outline"/>
-		<texture path="textures/tf2_box"/>
-		<texture path="textures/tf2_sentry"/>
-		<texture path="textures/lego_characters_atlas"/>
-		<texture path="textures/pogo_icons_atlas"/>
-		<texture path="textures/xcom_box"/>
-		<texture path="textures/portal_crosshair"/>
-		<texture path="textures/stardew_hud"/>
-		<texture path="textures/stardew_health"/>
-		<texture path="textures/stardew_energy"/>
-		<texture path="textures/stardew_clock_hand"/>
-		<texture path="textures/stardew_weather"/>
-		<texture path="textures/stardew_seasons"/>
-		<texture path="textures/misc_eurotruck"/>
-		<texture path="textures/misc_civ_left"/>
-		<texture path="textures/misc_civ_right"/>
-		<texture path="textures/misc_bloons"/>
-		<texture path="textures/doom_hud"/>
-		<texture path="textures/doom_portrait_atlas"/>
-		<texture path="textures/katamari_atlas"/>
-		<texture path="textures/katamari_earth"/>
-		<texture path="textures/boi_atlas"/>
-		<texture path="textures/boi_hud"/>
-		<texture path="textures/destiny_rankup_bg"/>
-		<texture path="textures/destiny_crucible"/>
-		<texture path="textures/destiny_rotator_1"/>
-		<texture path="textures/destiny_rotator_2"/>
-		<texture path="textures/destiny_orange_stripe"/>
-		<texture path="textures/destiny_frame_square"/>
-		<texture path="textures/destiny_frame_diamond"/>
-		<texture path="textures/destiny_stripe"/>
-		<texture path="textures/destiny_ranks"/>
-		<texture path="textures/rocketleague_boost_radial"/>
-		<texture path="textures/rocketleague_boost_static"/>
-		<texture path="textures/terraria_hotbar"/>
-		<texture path="textures/ftl_race_atlas"/>
-		<texture path="textures/ftl_crew_plate"/>
+		<texture path="guis/textures/mhudu/lego_characters_atlas" />
 	</AddFiles>
-	-->
 </mod>

@@ -1,78 +1,103 @@
-
-- every 5 minutes, a new hud element appears
-- favor elements that have not been picked (sort by tag)
-
-
-
-hud element categories:
-	actual:
-		- health
-		- ammo
-		- deployables
-		- grenades/ability
-		- armor
-		- teammates
-		- mission equipment 
-		- cable ties
-		- hostages
-		
-	not very useful:
-		- crosshair
-		- pagers
-		- money
-		- level
-		- loot
-		- chat?
-		
-	completely superfluous:
-		- date / time
-		- temperature
-		- killstreak
+todo:
+	- handle asset loading given a list of textures/fonts
+		-load assets on hud create, if enabled
+	- go over enabled/disabled mid-heist behavior
+		- require restart to affect changes? or only for enabling addons?
+		- destroy addon panels and call unregister listeners when addon is to be removed (ie when user disables it)
+	- hud categories
+		- re-check categories at any change (user changing any addon toggles)
+	- timer mode
+		- disable/enable timer mode
+		- hidden vs disabled addons?
+	- dynamically generate menus to enable/disable any addons
+	
 
 
-hud concepts list:
 
 
-	general concepts:
-		monster hunter
-		deep rock galactic?
-		miyamoto and gunicorn (rdr horse)
-		the division
-		clippy
-		subnautica 
-		dishonored
-		gungeon
-		gtfo
-		hunt showdown
-		icarus?
-		noita
-		terraria?
-		l4d/other source games?
-		apex legends?
-		don't starve together
-		helltaker
-		talos principle
-		rainbow 6 siege
-		
-	from the video: https://www.youtube.com/watch?v=jAymJW63PLk
-		duke nukem
-		
-	new elements:
-		"chalice requires runes"
-		persona 4 date/time
-		ffxiv team counter
-		smb64 lives counter
-		halo ce ammo counter?
-		tf2 mission timer
-		dark souls "you died"
-		runescape inventory
-		
-	returning elements:
-		tf2 health
-		lego star wars character
-		fallout 3 vats
 
-	undecided:
-		lego star wars stud counter for money?
-			- con: relies on upper money limit
-		
+
+
+
+
+
+concepts:
+
+
+	- every 5 minutes, a new hud element appears
+	- favor elements that have not been picked (sort by tag)
+
+
+
+	hud element categories:
+		actual:
+			- health
+			- ammo
+			- deployables
+			- grenades/ability
+			- armor
+			- teammates
+			- mission equipment 
+			- cable ties
+			- hostages
+			
+		not very useful:
+			- crosshair
+			- pagers
+			- money
+			- level
+			- loot
+			- chat?
+			
+		completely superfluous:
+			- date / time
+			- temperature
+			- killstreak
+
+
+	hud concepts list:
+
+
+		general concepts:
+			monster hunter
+			deep rock galactic?
+			miyamoto and gunicorn (rdr horse)
+			the division
+			clippy
+			subnautica 
+			dishonored
+			gungeon
+			gtfo
+			hunt showdown
+			icarus?
+			noita
+			terraria?
+			l4d/other source games?
+			apex legends?
+			don't starve together
+			helltaker
+			talos principle
+			rainbow 6 siege
+			
+		from the video: https://www.youtube.com/watch?v=jAymJW63PLk
+			duke nukem
+			
+		new elements:
+			"chalice requires runes"
+			persona 4 date/time
+			ffxiv team counter
+			smb64 lives counter
+			halo ce ammo counter?
+			tf2 mission timer
+			dark souls "you died"
+			runescape inventory
+			
+		returning elements:
+			tf2 health
+			lego star wars character
+			fallout 3 vats
+
+		undecided:
+			lego star wars stud counter for money?
+				- con: relies on upper money limit
+			
