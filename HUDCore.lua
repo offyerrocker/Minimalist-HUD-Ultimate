@@ -1,7 +1,6 @@
 MHUDU = MHUDU or {}
 MHUDU._core = MHUDUCore
 
-
 MHUDU.listeners = {
 	--[[ example:
 	[key] = {
@@ -10,8 +9,6 @@ MHUDU.listeners = {
 	}
 	--]]
 }
-
-
 
 -- Listener system
 function MHUDU:RegisterListener(event)

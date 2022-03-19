@@ -1,8 +1,7 @@
 todo:
-	- handle asset loading given a list of textures/fonts
-		-load assets on hud create, if enabled
+	- only load assets for enabled addons
 	- go over enabled/disabled mid-heist behavior
-		- require restart to affect changes? or only for enabling addons?
+		- require restart to affect changes? or only for enabling addons? <-- probably this
 		- destroy addon panels and call unregister listeners when addon is to be removed (ie when user disables it)
 	- hud categories
 		- re-check categories at any change (user changing any addon toggles)
@@ -10,6 +9,7 @@ todo:
 		- disable/enable timer mode
 		- hidden vs disabled addons?
 	- dynamically generate menus to enable/disable any addons
+	- implement update, register, destroy functions
 	
 
 
@@ -103,4 +103,4 @@ concepts:
 		undecided:
 			lego star wars stud counter for money?
 				- con: relies on upper money limit
-			
+		

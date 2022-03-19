@@ -1,5 +1,6 @@
 local addon_id = "test"
 return addon_id,{
+	autodetect_assets = true,
 	categories = {
 		--optional
 		--if the option is enabled, MHUDU makes an effort to choose a different type of HUD element each time.
