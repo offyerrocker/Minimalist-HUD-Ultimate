@@ -13,8 +13,7 @@ Hooks:PostHook(HUDManager,"_setup_player_info_hud_pd2","mhudu_create_hud",functi
 	MHUDU:CreateAddonHUDs()
 	
 --	MHUDU:StartTimer()
-	local enable_all = true
-	if enable_all then 
+	if not self._core:IsMinimalismCountdownEnabled() then 
 		for k,v in pairs(MHUDUCore._addons) do 
 			if v.user_data.register_func then 
 				v.user_data.register_func(v.user_data)

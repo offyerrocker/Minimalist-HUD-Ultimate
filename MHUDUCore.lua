@@ -15,6 +15,7 @@ do
 	MHUDUCore._addons = {} --see included addons for templates/examples
 	MHUDUCore.default_settings = {
 		minimalism_countdown_interval = 300 --5min
+		minimalism_countdown_enabled = false
 	}
 	MHUDUCore._timer = false
 	MHUDUCore._timer_paused = false
@@ -51,6 +52,7 @@ end
 -- Menu initialization
 
 Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu_manager)
+	BeardLib:AddUpdater("MHUDU_Update",callback(MHUDUCore,MHUDUCore,"Update"))
 --[[
 	MenuCallbackHandler.callback_modtemplate_toggle = function(self,item)
 		local value = item:value() == "on"
@@ -117,13 +119,18 @@ end
 
 -- Timer system
 
+function MHUDUCore:IsMinimalismCountdownEnabled()
+	--should be an instanced setting to avoid conflicts mid-heist?
+	return self.settings.minimalism_countdown_enabled
+end
+
 --starts the timer for adding the next addon
-function MHUDUCore:StartMinimalismTimer()
-	self._timer = self._timer or self:GetMinimalismTimeInterval()
+function MHUDUCore:StartMinimalismCountdown()
+	self._timer = (self._timer or 0) + self:GetMinimalismCountdownInterval()
 	self._timer_paused = false
 end
 
-function MHUDUCore:PauseMinimalismTimer()
+function MHUDUCore:PauseMinimalismCountdown()
 	self._timer_paused = true
 end
 
@@ -132,8 +139,28 @@ function MHUDUCore:GetMinimalismCountdownInterval()
 end
 
 function MHUDUCore:Update(t,dt)
-	if self._timer and not self._timer_paused then 
-		self._timer = self._timer - dt
+	if not self._timer_paused then 
+		if self._timer <= 0 then 
+			local next_addon
+				--effective one-frame delay after timer hits 0;
+				--check for next hud element here
+			if next_addon then 
+	--			next_addon.data:register_func(addon.data)
+				self._timer = false
+				self:StartMinimalismCountdown()
+			end
+		else
+			if self._timer and not self._timer_paused then 
+				self._timer = self._timer - dt
+				
+			end
+		end
+	end
+		
+	for id,addon_data in pairs(self._addons) do 
+		if addon_data.user_data.update_func then 
+			addon_data.user_data.update_func(addon_data.user_data,t,dt)
+		end
 	end
 end
 
@@ -223,9 +250,9 @@ end
 
 --recursively search a given path for assets and load them with their given extension and directory structure
 function MHUDUCore.recursive_search_addons_assets(root_path,path,file_func)
-	MHUDUCore:Log("Recursive path checking " .. tostring(path) .. " in " .. tostring(root_path))
+--	MHUDUCore:Log("Recursive path checking " .. tostring(path) .. " in " .. tostring(root_path))
 	if type(file_func) ~= "function" then 
-		MHUDUCore:Log("ERROR: Bad iteration function to recursive_search_addons_assets(" .. tostring(path) .. "," .. tostring(file_func) .. ")")
+--		MHUDUCore:Log("ERROR: Bad iteration function to recursive_search_addons_assets(" .. tostring(path) .. "," .. tostring(file_func) .. ")")
 		return
 	end
 	local path_util = MHUDUCore.path_util
@@ -316,6 +343,9 @@ function MHUDUCore:LoadAddons()
 			local ext_ids = cached_extensions[extension] or Idstring(extension)
 			cached_extensions[extension] = cached_extensions[extension] or ext_ids
 --			self:Log("Added: " .. tostring(extension) .. " " .. tostring(file_path_no_extension) .. " " .. tostring(root_path) .. " " .. tostring(file_path))
+
+
+			--BLT.AssetManager:CreateEntry(Idstring(file_path_no_extension),ext_ids,root_path .. file_path) --alt loading method
 			BeardLib.managers.file:AddFile(ext_ids,Idstring(file_path_no_extension),root_path .. file_path)
 			
 			if extension == "font" then 
