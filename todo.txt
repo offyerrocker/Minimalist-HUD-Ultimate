@@ -78,14 +78,17 @@ concepts:
 			helltaker
 			talos principle
 			rainbow 6 siege
+			--when you go down, your bots will send a team chat message saying "skill issue" with semirandom delays
+			--when you use a doctor bag with 0 downs, show fallout 4 "everyone disliked that" text
 			
 		from the video: https://www.youtube.com/watch?v=jAymJW63PLk
 			duke nukem
-			
+		
 		new elements:
 			"chalice requires runes"
 			persona 4 date/time
 			ffxiv team counter
+				-level up noise https://www.youtube.com/watch?v=DAHx3yUEnGU
 			smb64 lives counter
 			halo ce ammo counter?
 			tf2 mission timer

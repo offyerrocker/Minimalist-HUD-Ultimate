@@ -51,34 +51,66 @@ return addon_id,{
 			name = "hello",
 			texture = "guis/textures/mhudu/lego_characters_atlas",
 			texture_rect = {
-				128,128,128,128
+				56,56,56,56
 			},
 			x = 100,
 			y = 100,
 			w = 100,
-			y = 100,
+			h = 100,
 			color = Color.white,
 			alpha = 0.5
 		})
 		addon.test_bitmap = test_bitmap
+		
+		local chalice_icon = parent_panel:bitmap({
+			name = "hello",
+			texture = "guis/textures/mhudu/d2_chalice_icon",
+			x = 200,
+			y = 200,
+			color = Color.white,
+			alpha = 1
+		})
+		addon.chalice_icon = chalice_icon
+		
 		local test_text = parent_panel:text({
 			name = "text",
 			text = "whomst've",
 			color = Color.blue,
-			font = "fonts/hl2",
+			font = "fonts/myriad_pro",
 			font_size = 32
 		})
 		addon.test_text = test_text
 		
+		local grot_1 = parent_panel:text({
+			name = "text",
+			text = "whomst've",
+			color = Color.blue,
+			y = 300,
+			font = "fonts/grotesk_normal",
+			font_size = 32
+		})
+		local grot_2 = parent_panel:text({
+			name = "text",
+			text = "whomst've",
+			color = Color.blue,
+			y = 400,
+			font = "fonts/grotesk_bold",
+			font_size = 32
+		})
+		addon.grot_1 = grot_1
+		addon.grot_2 = grot_2
+		addon.test_text = test_text
 	end,
-	register_func = function()
+	register_func = function(addon)
 		--called when the addon is selected to be enabled by the element timer, 
 		--or if the timer mode is disabled (ie. if the user has chosen to enable all addons from the start)
 		
-		MHUDU:AddListener("set_criminal_health","testaddon_onstuffhappens",{
-			callback = function(addon,id,data)
-				addon.test_bitmap:set_color(Color(1,math.random(),1))
-				addon.test_text:set_text(string.format("%0.2f",data.current))
+		MHUDU:AddListener("set_criminal_health","testaddon_oncriminalhealthset",{
+			callback = function(id,data)
+				if id == HUDManager.PLAYER_PANEL then 
+					addon.test_bitmap:set_color(Color(1,math.random(),1))
+					addon.test_text:set_text(string.format("%0.2f",data.current))
+				end
 			end
 		})
 		

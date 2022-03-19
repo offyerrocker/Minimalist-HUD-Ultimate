@@ -7,6 +7,14 @@
 	<AddFiles directory="assets">
 		<font path="fonts/myriad_pro" load="true" unload="false" />
 		<texture path="fonts/myriad_pro" />
+		
+		<font path="fonts/grotesk_bold" load="true" unload="false" />
+		<texture path="fonts/grotesk_bold" />
+		
+		<font path="fonts/grotesk_normal" load="true" unload="false" />
+		<texture path="fonts/grotesk_normal" />
+		
 		<texture path="guis/textures/mhudu/lego_characters_atlas" />
+		<texture path="guis/textures/mhudu/d2_chalice_icon" />
 	</AddFiles>
 </mod>
