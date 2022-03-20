@@ -14,8 +14,8 @@ do
 --	MHUDUCore._localization
 	MHUDUCore._addons = {} --see included addons for templates/examples
 	MHUDUCore.default_settings = {
-		minimalism_countdown_interval = 300, --5min
 		minimalism_countdown_enabled = false,
+		minimalism_countdown_interval = 300, --5min
 		addon_save_data = {},
 		enabled_addons = {}
 	}
@@ -24,9 +24,7 @@ do
 			main = "mhudu_menu_main",
 			addons = "mhudu_addon_list"
 		},
-		addon_generated_submenus = {
-		
-		}
+		addon_generated_submenus = {}
 	}
 	MHUDUCore._timer = false
 	MHUDUCore._timer_paused = false
@@ -72,18 +70,17 @@ end
 Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu_manager)
 	BeardLib:AddUpdater("MHUDU_Update",callback(MHUDUCore,MHUDUCore,"Update"))
 	
-	
---[[
-	MenuCallbackHandler.callback_modtemplate_toggle = function(self,item)
+	MenuCallbackHandler.callback_mhudu_enable_minimalism = function(self,item)
 		local value = item:value() == "on"
-		MyNewModGlobal.settings.toggle_setting = value
-		MyNewModGlobal:Save()
+		MHUDUCore.settings.minimalism_countdown_enabled = value
+		MHUDUCore:SaveSettings()
 	end
 
-	MenuCallbackHandler.callback_modtemplate_slider = function(self,item)
-		MyNewModGlobal.settings.slider_setting = tonumber(item:value())
-		MyNewModGlobal:Save()
+	MenuCallbackHandler.callback_mhudu_set_minimalism_countdown_interval = function(self,item)
+		MHUDUCore.settings.minimalism_countdown_interval = tonumber(item:value())
+		MHUDUCore:SaveSettings()
 	end
+--[[
 
 	MenuCallbackHandler.callback_modtemplate_multiplechoice = function(self,item)
 		MyNewModGlobal.settings.multiplechoice_setting = tonumber(item:value())
@@ -118,7 +115,31 @@ Hooks:Add("MenuManagerSetupCustomMenus", "MenuManagerSetupCustomMenus_MHUDU", fu
 end)
 
 Hooks:Add("MenuManagerPopulateCustomMenus", "MenuManagerPopulateCustomMenus_MHUDU", function(menu_manager, nodes)
-
+	
+	MenuHelper:AddToggle({
+		id = "mhudu_enable_minimalism_countdown",
+		title = "menu_mhudu_enable_minimalism_countdown_title",
+		desc = "menu_mhudu_enable_minimalism_countdown_desc",
+		callback = "callback_mhudu_enable_minimalism",
+		value = MHUDUCore.settings.minimalism_countdown_enabled,
+		menu_id = MHUDUCore.menu_data.menu_ids.main,
+		priority = 2
+	})
+	MenuHelper:AddSlider({
+		id = "mhudu_set_minimalism_countdown_interval",
+		title = "menu_mhudu_set_minimalism_countdown_interval_title",
+		desc = "menu_mhudu_set_minimalism_countdown_interval_desc",
+		callback = "callback_mhudu_set_minimalism_countdown_interval",
+		value = MHUDUCore.settings.minimalism_countdown_interval,
+		min = 0,
+		max = 600,
+		step = 1,
+		default_value = MHUDUCore.default_settings.minimalism_countdown_interval,
+		menu_id = MHUDUCore.menu_data.menu_ids.main,
+		show_value = true,
+		priority = 1
+	})
+	
 	for addon_id,addon_data in pairs(MHUDUCore._addons) do 
 		local user_data = addon_data.user_data
 		local addon_menu_id = "mhudu_addon_submenu_" .. tostring(addon_id)
@@ -151,6 +172,7 @@ Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_MHUDU", fu
 		nodes[menu_id] = MenuHelper:BuildMenu(menu_id)
 		MenuHelper:AddMenuItem(nodes.blt_options,menu_id,title,desc)
 	end
+	
 	do 
 		local menu_id = MHUDUCore.menu_data.menu_ids.addons
 		local title = "menu_mhudu_addons_title"
@@ -167,15 +189,6 @@ Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_MHUDU", fu
 		MenuHelper:AddMenuItem(nodes[MHUDUCore.menu_data.menu_ids.addons],menu_id,title,desc)
 	end
 end)
-
---[[
-	"health_own",
-	"armor_own",
-	"grenades_own",
-	"health_team",
-	"armor_team",
-	"grenades_team"
---]]
 
 MHUDUCore.inactive_elements = {
 	
@@ -212,6 +225,21 @@ end
 
 function MHUDUCore:GetMinimalismCountdownInterval()
 	return self.settings.minimalism_countdown_interval
+end
+
+function MHUDUCore:OnGameStarted()
+	if self:IsMinimalismCountdownEnabled() then
+		self:StartMinimalismCountdown()
+	else
+		for addon_id,addon_data in pairs(self._addons) do 
+			if alive(addon_data.panel) then 
+				addon_data.panel:show()
+			end
+			if addon_data.user_data.register_func then 
+				addon_data.user_data.register_func(addon_data.user_data)
+			end
+		end
+	end
 end
 
 function MHUDUCore:Update(t,dt)

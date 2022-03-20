@@ -56,6 +56,15 @@ concepts:
 			- temperature
 			- killstreak
 
+--[[
+	"health_own",
+	"armor_own",
+	"grenades_own",
+	"health_team",
+	"armor_team",
+	"grenades_team"
+--]]
+
 
 	hud concepts list:
 

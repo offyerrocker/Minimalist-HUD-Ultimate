@@ -3,9 +3,13 @@
 	"menu_mhudu_main_desc" : "Minimalist HUD Ultimate Options",
 	"menu_mhudu_addons_title" : "Addons",
 	"menu_mhudu_addons_desc" : "Enable or disable installed addons",
+	"menu_mhudu_enable_minimalism_countdown_title" : "Enable Speedrun Mode",
+	"menu_mhudu_enable_minimalism_countdown_desc" : "If true, all addons start out disabled and are slowly enabled over time.",
+	"menu_mhudu_set_minimalism_countdown_interval_title" : "Addon Addition Interval",
+	"menu_mhudu_set_minimalism_countdown_interval_desc" : "The number of seconds before each addon is enabled in Speedrun Mode.",
 	"menu_mhudu_addon_generic_unknown_name" : "Unknown Addon",
-	"menu_mhudu_addon_generic_unknown_desc" : "An addon for MHUDU",
+	"menu_mhudu_addon_generic_unknown_desc" : "An unlabeled addon for MHUDU",
 	"menu_mhudu_addon_enable_generic_title" : "Enable this Addon",
-	"menu_mhudu_addon_enable_generic_desc" : "Requires restart",
+	"menu_mhudu_addon_enable_generic_desc" : "Requires game/heist restart.",
 	"menu_mhudu_readme_desc" : "Addons go here! They should be in the same format as the ones in the Base Addons folder, but don't put any new ones in there, or else they'll be overridden if you update MHUDU."
 }
