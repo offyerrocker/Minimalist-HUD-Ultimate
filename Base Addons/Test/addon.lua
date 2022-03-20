@@ -6,6 +6,7 @@ return addon_id,{
 --	menu_desc_id = "",
 	
 	autodetect_assets = true,
+	layer = 1,
 	categories = {
 		--optional
 		--if the option is enabled, MHUDU makes an effort to choose a different type of HUD element each time.
@@ -123,7 +124,7 @@ return addon_id,{
 		
 		
 	end,
-	destroy_func = function()
+	destroy_func = function(addon)  --not currently used
 		--called when the addon is removed
 		--ie. when the user disables the addon mid-heist, if the addon is active
 		--you do not need to remove the panel gui objects parented to the parent_panel, 
@@ -134,7 +135,7 @@ return addon_id,{
 		MHUDU:RemoveListener("set_criminal_health","testaddon_onstuffhappens")
 		
 	end,
-	update_func = function()
+	update_func = function(addon,t,dt)
 		--optional. if your addon has code that runs every frame,
 		--place it here so that MHUDU can safely handle starting/stopping it
 		--in case the user disables the addon mid-heist, after the addon is already active.

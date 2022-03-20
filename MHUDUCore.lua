@@ -69,6 +69,9 @@ end
 -- Menu management
 
 Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu_manager)
+	MHUDUCore._animator = QuickAnimate:new("minimalisthudultimate_animator",{parent = MHUDUCore,updater_type = QuickAnimate.updater_types.BeardLib,paused = false})
+	Hooks:Call("LoadQuickAnimateLibrary",MHUDUCore._animator)
+	
 	BeardLib:AddUpdater("MHUDU_Update",callback(MHUDUCore,MHUDUCore,"Update"))
 	
 	MenuCallbackHandler.callback_mhudu_enable_minimalism = function(self,item)
@@ -203,6 +206,26 @@ MHUDUCore.active_elements = {
 function MHUDUCore:Log(a,...)
 	return Console and Console:Log("[MINIMALIST HUD ULTIMATE] " .. tostring(a),...)
 end
+
+
+--HUD Animation
+
+function MHUDUCore:animate(object,func,done_cb,...)
+	return self._animator:animate(object,func,done_cb,...)
+end
+
+function MHUDUCore:animate_stop(object,do_cb,...)
+	return self._animator:animate_stop(object,do_cb,...)
+end
+
+function MHUDUCore:is_animating(object,...)
+	return self._animator:is_animating(object,...)
+end
+
+function MHUDUCore:animate_wait(timer,callback,...)
+	return self._animator:animate_wait(timer,callback,...)
+end
+
 
 
 

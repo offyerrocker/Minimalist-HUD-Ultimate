@@ -3,13 +3,11 @@ todo:
 	- go over enabled/disabled mid-heist behavior
 		- require restart to affect changes? or only for enabling addons? <-- probably this
 		- destroy addon panels and call unregister listeners when addon is to be removed (ie when user disables it)
+		- implement destroy function
 	- hud categories
 		- re-check categories at any change (user changing any addon toggles)
-	- timer mode
-		- disable/enable timer mode
-		- hidden vs disabled addons?
+	- toggle/button for manually enabling/disabling an addon
 	- dynamically generate menus to enable/disable any addons
-	- implement update, register, destroy functions
 	
 
 

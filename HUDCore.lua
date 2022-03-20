@@ -62,6 +62,7 @@ function MHUDU:CreateAddonHUDs()
 		if addon_data.user_data.create_func then 
 			local addon_panel = mhudu_panel:panel({
 				name = "addon_panel_" .. tostring(addon_id),
+				layer = addon_data.user_data.layer,
 				visible = false
 			})
 			addon_data.panel = addon_panel
@@ -70,7 +71,23 @@ function MHUDU:CreateAddonHUDs()
 	end
 end
 
+--Animation library
 
+function MHUDU:animate(object,func,done_cb,...)
+	return self._core:animate(object,func,done_cb,...)
+end
+
+function MHUDU:animate_wait(timer,callback,...)
+	return self._core:animate_wait(timer,callback,...)
+end
+
+function MHUDU:animate_stop(object,do_cb,...)
+	return self._core:animate_stop(object,do_cb,...)
+end
+
+function MHUDU:is_animating(object,...)
+	return self._core:is_animating(object,...)
+end
 
 
 
