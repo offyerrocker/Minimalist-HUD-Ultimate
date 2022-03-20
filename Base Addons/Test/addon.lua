@@ -110,6 +110,7 @@ return addon_id,{
 	register_func = function(addon)
 		--called when the addon is selected to be enabled by the element timer, 
 		--or if the timer mode is disabled (ie. if the user has chosen to enable all addons from the start)
+		--you can assume that create_func() has already been run by this point so your hud element should be extant and valid
 		
 		MHUDU:AddListener("set_criminal_health","testaddon_oncriminalhealthset",{
 			callback = function(id,data)

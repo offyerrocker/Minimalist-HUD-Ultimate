@@ -16,6 +16,7 @@ do
 	MHUDUCore.default_settings = {
 		minimalism_countdown_enabled = false,
 		minimalism_countdown_interval = 300, --5min
+		addon_randomization_weighted_mode = true,
 		addon_save_data = {},
 		enabled_addons = {}
 	}
@@ -206,6 +207,10 @@ end
 
 
 
+function MHUDUCore:IsWeightedSearchEnabled()
+	return self.settings.addon_randomization_weighted_mode
+end
+
 -- Timer system
 
 function MHUDUCore:IsMinimalismCountdownEnabled()
@@ -246,10 +251,12 @@ function MHUDUCore:Update(t,dt)
 	if not self._timer_paused then 
 		if self._timer then 
 			if self._timer <= 0 then 
-				local next_addon
+				local next_addon = self:IsWeightedSearchEnabled() and self:GetRarestAddon() or self:GetRandomAddon()
 					--effective one-frame delay after timer hits 0;
 					--check for next hud element here
+
 				if next_addon then 
+					self:ActivateAddon(next_addon)
 		--			next_addon.data:register_func(addon.data)
 					self._timer = false
 					self:StartMinimalismCountdown()
@@ -271,40 +278,51 @@ function MHUDUCore:Update(t,dt)
 	end
 end
 
---[[
---finds the rarest type of element
---and returns the id of a random inactive element of that type
---if there are no inactive elements or each type of element is equally rare, returns nil
-function MHUDUCore:GetRarestElement()
-	local recorded = {}
-	for id,data in pairs(self.inactive_elements) do 
-		for _,element_type in pairs (data.types) do
-			recorded[element_type] = recorded[element_type] or {}
-			table.insert(recorded[element_type],id)
+
+function MHUDUCore:GetRandomAddon()
+	local addon_candidates = {}
+	for addon_id,addon_data in pairs(self._addons) do 
+		if self:IsAddonEnabled(addon_id) and not self:IsAddonActive(addon_id) then 
+			table.insert(addon_candidates,addon_id)
 		end
 	end
-	for id,data in pairs(self.active_elements) do 
-		for _,element_type in pairs(data.types) do 
-			recorded[element_type] = recorded[element_type] or {}
-			table.insert(recorded[element_type],id)
-		end
-	end
+	return addon_candidates[math.random(#addon_candidates)]
 end
 
---returns a random hud element that isn't already added
---if there are no inactive hud elements, returns nil
-function MHUDUCore:GetRandomElement()
-	local eligible = {}
-	for id,data in pairs(self.inactive_elements) do 
-		if not self:IsAddonEnabled(id) then 
-			table.insert(eligible,id)
+
+--if there are no inactive elements, returns nil
+function MHUDUCore:GetRarestAddon()
+	local recorded_categories = {}
+	for addon_id,addon_data in pairs(self._addons) do 
+		if self:IsAddonEnabled(addon_id) and not self:IsAddonActive(addon_id) then 
+			for _,category in pairs(addon_data.user_data.categories) do 
+				recorded_categories[category] = recorded_categories[category] or {}
+				table.insert(recorded_categories[category],{id = addon_id,weight = #addon_data.user_data.categories})
+			end
 		end
 	end
-	return eligible[math.random(#eligible)]
---	return table.random(self.inactive_elements)
+	local rarest_value = math.huge
+	local rarest_category = nil
+	for category,entries in pairs(recorded_categories) do 
+		local num_entries = #entries
+		if num_entries < rarest_value then 
+			rarest_value = num_entries
+			rarest_category = category
+		end
+	end
+	
+	if rarest_category then
+		local lowest_weight = math.huge
+		local lowest_addon = nil
+		for _,addon_candidate in pairs(recorded_categories[rarest_category]) do 
+			if addon_candidate.weight < lowest_weight then 
+				lowest_weight = addon_candidate.weight
+				lowest_addon = addon_candidate.id
+			end
+		end
+		return lowest_addon
+	end
 end
-
---]]
 
 --returns true if the user has enabled the setting that allows this addon to be used
 function MHUDUCore:IsAddonEnabled(id)
@@ -329,27 +347,6 @@ function MHUDUCore:ActivateAddon(id)
 		end
 	end
 end
-
---[[
-function MHUDUCore:SelectRandomHUDElement()
-	local id
-	if distributed_rarity then 
-		id = self:GetRarestElement()
-	end
-	id = id or self:GetRandomElement()
-	
-	self:ActivateHUDElement(id)
-end
-
-function MHUDUCore:ActivateHUDElement(id)
-	local new_element = self.inactive_elements[id]
-	self.inactive_elements[id] = nil
-	self.active_elements[id] = new_element
-	
-	--new_element.callback_init(Application:time())
-end
---]]
-
 
 -- Create MHUDUAddons folder
 function MHUDUCore:CheckCreateAddonFolder()
