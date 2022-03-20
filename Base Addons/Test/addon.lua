@@ -1,5 +1,10 @@
 local addon_id = "test"
 return addon_id,{
+	name = "Test addon 1",
+	desc = "Hello there!",
+--	menu_title_id = "",
+--	menu_desc_id = "",
+	
 	autodetect_assets = true,
 	categories = {
 		--optional

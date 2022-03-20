@@ -61,7 +61,8 @@ function MHUDU:CreateAddonHUDs()
 	for addon_id,addon_data in pairs(self._core._addons) do 
 		if addon_data.user_data.create_func then 
 			local addon_panel = mhudu_panel:panel({
-				name = "addon_panel_" .. tostring(addon_id)
+				name = "addon_panel_" .. tostring(addon_id),
+				visible = false
 			})
 			addon_data.panel = addon_panel
 			addon_data.user_data.create_func(addon_data.user_data,addon_panel)

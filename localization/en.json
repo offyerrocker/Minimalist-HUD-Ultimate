@@ -1,4 +1,11 @@
 {
-	"hsdljfahs" : "asdfhahhsdkjlf",
-	"mhudu_readme_desc" : "Addons go here! They should be in the same format as the ones in the Base Addons folder, but don't put any new ones in there, or else they'll be overridden if you update MHUDU."
+	"menu_mhudu_main_title" : "Minimalist HUD Ultimate",
+	"menu_mhudu_main_desc" : "Minimalist HUD Ultimate Options",
+	"menu_mhudu_addons_title" : "Addons",
+	"menu_mhudu_addons_desc" : "Enable or disable installed addons",
+	"menu_mhudu_addon_generic_unknown_name" : "Unknown Addon",
+	"menu_mhudu_addon_generic_unknown_desc" : "An addon for MHUDU",
+	"menu_mhudu_addon_enable_generic_title" : "Enable this Addon",
+	"menu_mhudu_addon_enable_generic_desc" : "Requires restart",
+	"menu_mhudu_readme_desc" : "Addons go here! They should be in the same format as the ones in the Base Addons folder, but don't put any new ones in there, or else they'll be overridden if you update MHUDU."
 }

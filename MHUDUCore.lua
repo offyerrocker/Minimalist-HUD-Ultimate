@@ -14,8 +14,18 @@ do
 --	MHUDUCore._localization
 	MHUDUCore._addons = {} --see included addons for templates/examples
 	MHUDUCore.default_settings = {
-		minimalism_countdown_interval = 300 --5min
-		minimalism_countdown_enabled = false
+		minimalism_countdown_interval = 300, --5min
+		minimalism_countdown_enabled = false,
+		enabled_addons = {}
+	}
+	MHUDUCore.menu_data = {
+		menu_ids = {
+			main = "mhudu_menu_main",
+			addons = "mhudu_addon_list"
+		},
+		addon_generated_submenus = {
+		
+		}
 	}
 	MHUDUCore._timer = false
 	MHUDUCore._timer_paused = false
@@ -32,7 +42,14 @@ function MHUDUCore:LoadSettings()
 	local file = io.open(self._save_path, "r")
 	if (file) then
 		for k, v in pairs(json.decode(file:read("*all"))) do
-			self.settings[k] = v
+			if type(v) == "table" then 
+				self.settings[k] = self.settings[k] or {}
+				for i,j in pairs(v) do 
+					self.settings[k][i] = j
+				end
+			else
+				self.settings[k] = v
+			end
 		end
 	else
 --		self.settings = table.deep_map_copy(self.default_settings)
@@ -51,8 +68,69 @@ end
 
 -- Menu initialization
 
+
+
+Hooks:Add("MenuManagerSetupCustomMenus", "MenuManagerSetupCustomMenus_MHUDU", function(menu_manager, nodes)
+	MenuHelper:NewMenu(MHUDUCore.menu_data.menu_ids.main)
+	MenuHelper:NewMenu(MHUDUCore.menu_data.menu_ids.addons)
+end)
+
+
+Hooks:Add("MenuManagerPopulateCustomMenus", "MenuManagerPopulateCustomMenus_MHUDU", function(menu_manager, nodes)
+
+	for addon_id,addon_data in pairs(MHUDUCore._addons) do 
+		local user_data = addon_data.user_data
+		local addon_menu_id = "mhudu_addon_submenu_" .. tostring(addon_id)
+		MenuHelper:NewMenu(addon_menu_id)
+		MHUDUCore.menu_data.addon_generated_submenus[addon_id] = addon_menu_id
+		
+		local callback_name = "callback_mhudu_addon_enable_" .. tostring(addon_id)
+		MenuCallbackHandler[callback_name] = function(self,item)
+			local enabled = item:value() == "on"
+			MHUDUCore.settings.enabled_addons[addon_id] = enabled
+			MHUDUCore:SaveSettings()
+		end
+		MenuHelper:AddToggle({
+			id = "mhudu_addon_enable_" .. addon_id,
+			title = "menu_mhudu_addon_enable_generic_title",
+			desc = "menu_mhudu_addon_enable_generic_desc",
+			callback = callback_name,
+			value = MHUDUCore.settings.enabled_addons[addon_id] and true or false,
+			menu_id = addon_menu_id
+		})
+		
+	end
+end)
+
+Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_MHUDU", function( menu_manager, nodes )
+	do 
+		local menu_id = MHUDUCore.menu_data.menu_ids.main
+		local title = "menu_mhudu_main_title"
+		local desc = "menu_mhudu_main_desc"
+		nodes[menu_id] = MenuHelper:BuildMenu(menu_id)
+		MenuHelper:AddMenuItem(nodes.blt_options,menu_id,title,desc)
+	end
+	do 
+		local menu_id = MHUDUCore.menu_data.menu_ids.addons
+		local title = "menu_mhudu_addons_title"
+		local desc = "menu_mhudu_addons_desc"
+		nodes[menu_id] = MenuHelper:BuildMenu(menu_id)
+		MenuHelper:AddMenuItem(nodes[MHUDUCore.menu_data.menu_ids.main],menu_id,title,desc)
+	end
+	
+	for addon_id,menu_id in pairs(MHUDUCore.menu_data.addon_generated_submenus) do 
+		local addon_data = MHUDUCore._addons[addon_id]
+		local title = addon_data.name_id
+		local desc = addon_data.desc_id
+		nodes[menu_id] = MenuHelper:BuildMenu(menu_id)
+		MenuHelper:AddMenuItem(nodes[MHUDUCore.menu_data.menu_ids.addons],menu_id,title,desc)
+	end
+end)
+
 Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu_manager)
 	BeardLib:AddUpdater("MHUDU_Update",callback(MHUDUCore,MHUDUCore,"Update"))
+	
+	
 --[[
 	MenuCallbackHandler.callback_modtemplate_toggle = function(self,item)
 		local value = item:value() == "on"
@@ -85,10 +163,11 @@ Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu
 	
 	MHUDUCore:CheckCreateAddonFolder()
 	
+	--load addons from user and from base mhudu
 	MHUDUCore:LoadAddons()
 	
 	MHUDUCore:LoadSettings()
-	MenuHelper:LoadFromJsonFile(MHUDUCore._menu_path, MHUDUCore, MHUDUCore.settings)
+--	MenuHelper:LoadFromJsonFile(MHUDUCore._menu_path, MHUDUCore, MHUDUCore.settings)
 end)
 
 
@@ -140,26 +219,29 @@ end
 
 function MHUDUCore:Update(t,dt)
 	if not self._timer_paused then 
-		if self._timer <= 0 then 
-			local next_addon
-				--effective one-frame delay after timer hits 0;
-				--check for next hud element here
-			if next_addon then 
-	--			next_addon.data:register_func(addon.data)
-				self._timer = false
-				self:StartMinimalismCountdown()
-			end
-		else
-			if self._timer and not self._timer_paused then 
+		if self._timer then 
+			if self._timer <= 0 then 
+				local next_addon
+					--effective one-frame delay after timer hits 0;
+					--check for next hud element here
+				if next_addon then 
+		--			next_addon.data:register_func(addon.data)
+					self._timer = false
+					self:StartMinimalismCountdown()
+				end
+			else 
 				self._timer = self._timer - dt
-				
 			end
 		end
 	end
-		
+	
+	--todo if actually ingame
+	
 	for id,addon_data in pairs(self._addons) do 
-		if addon_data.user_data.update_func then 
-			addon_data.user_data.update_func(addon_data.user_data,t,dt)
+		if addon_data.active then
+			if addon_data.user_data.update_func then 
+				addon_data.user_data.update_func(addon_data.user_data,t,dt)
+			end
 		end
 	end
 end
@@ -206,6 +288,23 @@ function MHUDUCore:IsAddonEnabled(id)
 	end
 end
 
+function MHUDUCore:IsAddonActive(id)
+	if id and self._addons[id] then
+		return self._addons[id].active
+	end
+end
+
+function MHUDUCore:ActivateAddon(id)
+	if id and self._addons[id] then
+		local addon_data = self._addons[id]
+		addon_data.active = true
+		addon_data.panel:show()
+		if addon_data.user_data.register_func then 
+			addon_data.user_data.register_func(addon_data.user_data)
+		end
+	end
+end
+
 --[[
 function MHUDUCore:SelectRandomHUDElement()
 	local id
@@ -238,7 +337,7 @@ function MHUDUCore:CheckCreateAddonFolder()
 		if file then
 			--this is executed on startup, before localizationmanager is loaded
 			
-			local readme_text = managers.localization:text("mhudu_readme_desc")
+			local readme_text = managers.localization:text("menu_mhudu_readme_desc")
 			
 			file:write(readme_text)
 			file:flush()
@@ -287,13 +386,35 @@ function MHUDUCore:LoadAddons()
 			if s_error then 
 				self:Log("FATAL ERROR: LoadAddons(): " .. tostring(s_error),{color=Color.red})
 			else
-				local addon_id,addon_data = run_addon_func()
+				local addon_id,user_data = run_addon_func()
 				if addon_id then 
-					self._addons[addon_id] = {
+					local addon_data = {
+						active = false,
 						id = addon_id,
-						user_data = addon_data,
+						user_data = user_data,
 						path = addons_folder_path .. folder_name
 					}
+					self._addons[addon_id] = addon_data
+					
+					--automatic localization
+					local loc_strings = {}
+					local name_loc = user_data.name
+					local desc_loc = user_data.desc
+					if name_loc then 
+						local name_id = "mhudu_addon_" .. addon_id .. "_name_id"
+						loc_strings[name_id] = name_loc
+						addon_data.name_id = name_id
+					else
+						addon_data.name_id = "menu_mhudu_addon_generic_unknown_name"
+					end
+					if desc_loc then 
+						local desc_id = "mhudu_addon_" .. addon_id .. "_desc_id"
+						loc_strings[desc_id] = desc_loc
+						addon_data.desc_id = desc_id
+					else
+						addon_data.desc_id = "menu_mhudu_addon_generic_unknown_desc"
+					end
+					managers.localization:add_localized_strings(loc_strings)
 					
 					local potential_funcs = {
 						"create_func",
@@ -304,7 +425,7 @@ function MHUDUCore:LoadAddons()
 					
 					local missing_funcs = {}
 					for _,func_name in ipairs(potential_funcs) do 
-						if type(addon_data[func_name]) ~= "function" then 
+						if type(user_data[func_name]) ~= "function" then 
 							table.insert(missing_funcs,func_name)
 						end
 					end

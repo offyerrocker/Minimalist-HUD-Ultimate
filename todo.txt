@@ -14,7 +14,9 @@ todo:
 
 
 
-
+post-release:
+	- auto-updater for addons
+		-backport to ach
 
 
 
