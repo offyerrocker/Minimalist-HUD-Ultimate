@@ -16,6 +16,7 @@ do
 	MHUDUCore.default_settings = {
 		minimalism_countdown_interval = 300, --5min
 		minimalism_countdown_enabled = false,
+		addon_save_data = {},
 		enabled_addons = {}
 	}
 	MHUDUCore.menu_data = {
@@ -66,15 +67,55 @@ function MHUDUCore:SaveSettings()
 end
 
 
--- Menu initialization
+-- Menu management
 
+Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu_manager)
+	BeardLib:AddUpdater("MHUDU_Update",callback(MHUDUCore,MHUDUCore,"Update"))
+	
+	
+--[[
+	MenuCallbackHandler.callback_modtemplate_toggle = function(self,item)
+		local value = item:value() == "on"
+		MyNewModGlobal.settings.toggle_setting = value
+		MyNewModGlobal:Save()
+	end
 
+	MenuCallbackHandler.callback_modtemplate_slider = function(self,item)
+		MyNewModGlobal.settings.slider_setting = tonumber(item:value())
+		MyNewModGlobal:Save()
+	end
+
+	MenuCallbackHandler.callback_modtemplate_multiplechoice = function(self,item)
+		MyNewModGlobal.settings.multiplechoice_setting = tonumber(item:value())
+		MyNewModGlobal:Save()
+	end
+
+	MenuCallbackHandler.callback_modtemplate_button = function(self,item)
+		--on menu button click: do nothing in particular
+	end
+	
+	MenuCallbackHandler.callback_modtemplate_keybind_2 = function(self)
+		--on keybind press: do nothing in particular
+	end	
+	
+	MenuCallbackHandler.callback_modtemplate_back = function(this)
+		--on menu exit: do nothing in particular
+	end
+	--]]
+	
+	MHUDUCore:CheckCreateAddonFolder()
+	
+	--load addons from user and from base mhudu
+	MHUDUCore:LoadAddons()
+	
+	MHUDUCore:LoadSettings()
+--	MenuHelper:LoadFromJsonFile(MHUDUCore._menu_path, MHUDUCore, MHUDUCore.settings)
+end)
 
 Hooks:Add("MenuManagerSetupCustomMenus", "MenuManagerSetupCustomMenus_MHUDU", function(menu_manager, nodes)
 	MenuHelper:NewMenu(MHUDUCore.menu_data.menu_ids.main)
 	MenuHelper:NewMenu(MHUDUCore.menu_data.menu_ids.addons)
 end)
-
 
 Hooks:Add("MenuManagerPopulateCustomMenus", "MenuManagerPopulateCustomMenus_MHUDU", function(menu_manager, nodes)
 
@@ -126,50 +167,6 @@ Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_MHUDU", fu
 		MenuHelper:AddMenuItem(nodes[MHUDUCore.menu_data.menu_ids.addons],menu_id,title,desc)
 	end
 end)
-
-Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu_manager)
-	BeardLib:AddUpdater("MHUDU_Update",callback(MHUDUCore,MHUDUCore,"Update"))
-	
-	
---[[
-	MenuCallbackHandler.callback_modtemplate_toggle = function(self,item)
-		local value = item:value() == "on"
-		MyNewModGlobal.settings.toggle_setting = value
-		MyNewModGlobal:Save()
-	end
-
-	MenuCallbackHandler.callback_modtemplate_slider = function(self,item)
-		MyNewModGlobal.settings.slider_setting = tonumber(item:value())
-		MyNewModGlobal:Save()
-	end
-
-	MenuCallbackHandler.callback_modtemplate_multiplechoice = function(self,item)
-		MyNewModGlobal.settings.multiplechoice_setting = tonumber(item:value())
-		MyNewModGlobal:Save()
-	end
-
-	MenuCallbackHandler.callback_modtemplate_button = function(self,item)
-		--on menu button click: do nothing in particular
-	end
-	
-	MenuCallbackHandler.callback_modtemplate_keybind_2 = function(self)
-		--on keybind press: do nothing in particular
-	end	
-	
-	MenuCallbackHandler.callback_modtemplate_back = function(this)
-		--on menu exit: do nothing in particular
-	end
-	--]]
-	
-	MHUDUCore:CheckCreateAddonFolder()
-	
-	--load addons from user and from base mhudu
-	MHUDUCore:LoadAddons()
-	
-	MHUDUCore:LoadSettings()
---	MenuHelper:LoadFromJsonFile(MHUDUCore._menu_path, MHUDUCore, MHUDUCore.settings)
-end)
-
 
 --[[
 	"health_own",
@@ -395,7 +392,7 @@ function MHUDUCore:LoadAddons()
 						path = addons_folder_path .. folder_name
 					}
 					self._addons[addon_id] = addon_data
-					
+					self.settings.addon_save_data[addon_id] = self.settings.addon_save_data[addon_id] or {}
 					--automatic localization
 					local loc_strings = {}
 					local name_loc = user_data.name
