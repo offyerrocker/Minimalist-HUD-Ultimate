@@ -314,11 +314,12 @@ end
 
 
 --if there are no inactive elements, returns nil
+--addons without categories are not considered
 function MHUDUCore:GetRarestAddon()
 	local recorded_categories = {}
 	for addon_id,addon_data in pairs(self._addons) do 
 		if self:IsAddonEnabled(addon_id) and not self:IsAddonActive(addon_id) then 
-			for _,category in pairs(addon_data.user_data.categories) do 
+			for _,category in pairs(addon_data.user_data.categories or {}) do 
 				recorded_categories[category] = recorded_categories[category] or {}
 				table.insert(recorded_categories[category],{id = addon_id,weight = #addon_data.user_data.categories})
 			end
@@ -358,6 +359,10 @@ function MHUDUCore:IsAddonActive(id)
 	if id and self._addons[id] then
 		return self._addons[id].active
 	end
+end
+
+function MHUDUCore:GetAddon(id)
+	return id and self._addons[id] or nil
 end
 
 function MHUDUCore:ActivateAddon(id)
@@ -439,6 +444,12 @@ function MHUDUCore:LoadAddons()
 						user_data = user_data,
 						path = addons_folder_path .. folder_name
 					}
+					
+					--set to enabled automatically if first-time installation
+					if self.settings.enabled_addons[addon_id] == nil then 
+						self.settings.enabled_addons[addon_id] = true
+					end
+					
 					self._addons[addon_id] = addon_data
 					self.settings.addon_save_data[addon_id] = self.settings.addon_save_data[addon_id] or {}
 					--automatic localization

@@ -94,7 +94,7 @@ concepts:
 			duke nukem
 		
 		new elements:
-			"chalice requires runes"
+						(DONE) "chalice requires runes"
 			persona 4 date/time
 			ffxiv team counter
 				-level up noise https://www.youtube.com/watch?v=DAHx3yUEnGU
