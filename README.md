@@ -14,3 +14,11 @@ Asset sources:
 			(used the atlas and js file from here) 
 		Origin: Clippy, officially named Clippit, was a digital assistant for Microsoft's rich-text editor. 
 		Proc circumstances: 
+			- Clippy is always watching. Waiting.
+			- Clippy currently constantly plays random animations in his sprite sheet. 
+	- Pokémon Mystery Dungeon Red/Blue: Battle Feed
+		Source: Pokémon Mystery Dungeon Red Rescue Team/Pokémon Mystery Dungeon Blue Rescue Team
+		Assets from: https://www.dafont.com/pkmn-mystery-dungeon.font , and recreated by myself
+		Origin: This is the text log that displays any in-game battle information, as well as speech from NPCs. 
+		Proc circumstances: 
+			(planned) Many actions will send a message to the battle log, including: any time any unit fires a weapon, an enemy takes damage or dies, a player goes down, enters custody, changes state (tased, cloaked, etc), uses deployables, acquires mission equipment, etc. 
