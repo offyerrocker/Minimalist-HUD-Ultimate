@@ -37,6 +37,7 @@ end
 
 
 
+
 -- I/O
 function MHUDUCore:LoadSettings()
 	local file = io.open(self._save_path, "r")
@@ -205,6 +206,50 @@ MHUDUCore.active_elements = {
 
 function MHUDUCore:Log(a,...)
 	return Console and Console:Log("[MINIMALIST HUD ULTIMATE] " .. tostring(a),...)
+end
+
+--finds the number with the highest magnitude (absolute value is furthest from 0)
+function MHUDUCore.math_max_magn(...)
+	local sign = 1
+	local cmax
+	for i,n in ipairs({...}) do 
+		if cmax then
+			local m = math.abs(n)
+			if m > cmax then 
+				--tiebreaker goes to first
+				cmax = m
+				sign = math.sign(n)
+			end
+		else
+			cmax = math.abs(n)
+			sign = math.sign(n)
+		end
+	end
+	if cmax then 
+		return cmax * sign
+	end
+end
+
+--finds the number with the lowest magnitude (absolute value is closest to 0)
+function MHUDUCore.math_min_magn(...)
+	local sign = 1
+	local cmin
+	for i,n in ipairs({...}) do 
+		if cmin then
+			local m = math.abs(n)
+			if m <= cmin then 
+				--tiebreaker goes to first
+				cmin = m
+				sign = math.sign(n)
+			end
+		else
+			cmin = math.abs(n)
+			sign = math.sign(n)
+		end
+	end
+	if cmin then 
+		return cmin * sign
+	end
 end
 
 

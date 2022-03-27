@@ -53,5 +53,30 @@ Hooks:Add("LoadQuickAnimateLibrary","MHUDU_AddQuickAnimateLibrary",function(pare
 		end
 	end
 	
+	function parent.animate_text_word_chunks(o,t,dt,start_t,duration,strings)
+		local progress = (t - start_t) / duration
+		
+		
+		
+		if progress >= 1 then 
+			o:set_text(table.concat(strings," "))
+			return true
+		else
+			local frac = 0
+			local n_str = #strings
+			for i=1,n_str,1 do
+				if progress >= i/n_str then 
+					frac = i
+				else
+					break
+				end
+			end
+			if frac > 0 then
+				o:set_text(table.concat(strings," ",1,frac))
+			end
+		end
+		
+	end
+	
 	
 end)
