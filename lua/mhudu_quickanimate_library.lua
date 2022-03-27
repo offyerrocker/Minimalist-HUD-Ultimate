@@ -28,8 +28,8 @@ Hooks:Add("LoadQuickAnimateLibrary","MHUDU_AddQuickAnimateLibrary",function(pare
 		if from_x and to_x then 
 			o:set_x(from_x + ((to_x - from_x) * ratio))
 		end
-		if start_y and to_y then 
-			o:set_y(start_y + ((to_y - start_y) * ratio))
+		if from_y and to_y then 
+			o:set_y(from_y + ((to_y - from_y) * ratio))
 		end
 	end
 	
@@ -48,8 +48,8 @@ Hooks:Add("LoadQuickAnimateLibrary","MHUDU_AddQuickAnimateLibrary",function(pare
 		if from_x and to_x then 
 			o:set_x(from_x + ((to_x - from_x) * ratio))
 		end
-		if start_y and to_y then 
-			o:set_y(start_y + ((to_y - start_y) * ratio))
+		if from_y and to_y then 
+			o:set_y(from_y + ((to_y - from_y) * ratio))
 		end
 	end
 	
