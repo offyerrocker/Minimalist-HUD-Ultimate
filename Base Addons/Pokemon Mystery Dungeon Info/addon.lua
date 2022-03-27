@@ -1,15 +1,12 @@
 --todo: 
---		adjust starting message behavior (place below last message, or at top if empty; once overflowing, start moving messages up)
+--		scrolling animations maybe i guess
 --		add more message procs
---			fire any weapon
 --			use throwable or ability
 --			place equipment
 --			player take damage
 --			player change state (incl. downed, custody)
 --			acquire mission equipment
 --			use mission equipment
-
---!! current dt/move()-based animate function is inaccurate. use absolute positions with set_pos. this will ensure more accurate movement while also fixing the bunching-up problem while animating rapid messages
 
 local addon_id = "mysterydungeon"
 return addon_id,{
@@ -40,6 +37,13 @@ return addon_id,{
 		noshadow = "fonts/pkmn_mdr_30_noshadow",
 	},
 	bg_texture = "guis/textures/mhudu/pkmn_mdr_bg",
+	state_lookups = {
+		bleedout = " was bleeding out!",
+		fatal = " was knocked out!",
+		incapacitated = " was incapacitated!",
+		dead = " was defeated!",
+		arrested = " was arrested!"
+	},
 	message_count = 0,
 	font_size = 24,
 --	max_num_text_objects = 24,
@@ -135,22 +139,64 @@ return addon_id,{
 			layer = 3
 		})
 		addon.feed_text_bound = feed_text_bound
-		--[[
-		local feed_text_scroller = feed_panel:panel({
-			name = "feed_text_scroller"
---			h = 0
-		})
-		addon.feed_text_scroller = feed_text_scroller
-		--]]
 	end,
 	register_func = function(addon)
+		local pm = managers.player
+		local player_unit = pm:local_player()
+		
 		addon.max_lines = math.floor(addon.feed_text_bound:h() / addon.font_size)
 		
 		addon.get_weapon_name(addon,1)
 		addon.get_weapon_name(addon,2)
-	
-		local pm = managers.player
-		local player_unit = pm:local_player()
+		
+		--[[
+		Hooks:PostHook(TeamAIDamage,"_die","mhudu_pkmdr_teamai_on_death",function(self)
+			local unit_name = managers.criminals:character_name_by_unit(self._unit)
+			
+			OffyLib:c_log("Oh no! " .. tostring(unit_name or self) .. " was defeated! They left the rescue team.")
+		end)
+		Hooks:PostHook(TeamAIDamage,"on_arrested","mhudu_pkmdr_teamai_arrested",function(self)
+			local unit_name = managers.criminals:character_name_by_unit(self._unit)
+			
+			OffyLib:c_log("Oh no! " .. tostring(unit_name or self) .. " was arrested!")
+		end)
+		Hooks:PostHook(TeamAIDamage,"damage_tase","mhudu_pkmdr_teamai_tased",function(self,attack_data)
+			local unit_name = managers.criminals:character_name_by_unit(self._unit)
+			
+			OffyLib:c_log("New AI state: tased for " .. tostring(unit_name or self))
+		end)
+--			OffyLib:c_log("New AI state: " .. tostring(state_name) .. " for " .. tostring(unit_name or self))
+		--]]
+
+		pm:register_message(Message.OnPlayerDodge,"mhudu_pkmdr_onplayerdodge",function()
+			local player_name = managers.network.account:username()
+			local player_color = Color.yellow
+			local substrings = {
+				{s = player_name,color = player_color},
+				{s = " is unaffected!",color = nil}
+			}
+			
+			local color_data = {}
+			local s_all = ""
+			local c = 0
+			for i,v in ipairs(substrings) do 
+				local str = v.s
+				local col = v.color
+				s_all = s_all .. str
+				local s_start = c
+				local s_end = s_start + utf8.len(str)
+				if col then
+					table.insert(color_data,{
+						s_start = s_start,
+						s_end = s_end,
+						color = col
+					})
+				end
+				c = s_end
+			end
+			
+			addon.add_text(addon,s_all,color_data)
+		end)
 		pm:register_message(Message.OnEnemyShot, "mhudu_pkmdr_onenemyshot",function(unit, attack_data)
 			if alive(unit) then
 				local attacker_unit = attack_data.attacker_unit
@@ -267,15 +313,157 @@ return addon_id,{
 					end
 					addon.add_text(addon,s_all,target_color_data)
 				end
+				if attack_data.result.type == "death" then 
+					local substrings = {
+						{s = unit_name,color=unit_color},
+						{s = " was defeated!",color=nil}
+					}
+					
+					local target_color_data = {}
+					local s_all = ""
+					local c = 0
+					for i,v in ipairs(substrings) do 
+						local str = v.s
+						local col = v.color
+						s_all = s_all .. str
+						local s_start = c
+						local s_end = s_start + utf8.len(str)
+						if col then
+							table.insert(target_color_data,{
+								s_start = s_start,
+								s_end = s_end,
+								color = col
+							})
+						end
+						c = s_end
+					end
+					addon.add_text(addon,s_all,target_color_data)
+				end
 			end
 		end)
+--[[ 
+		pm:register_message(Message.OnEnemyKilled, "mhudu_pkmdr_onenemykilled",function(equipped_unit,variant,unit)
+			do return end
+			log("Enemy killed" .. tostring(unit))
+			if alive(unit) then
+				local unit_base = unit:base()
+				local unit_color = Color("00ffff")
+				local tweak_table = unit_base._tweak_table or "none"
+				local unit_name = tweak_table
+				if HopLib then 
+					local name_provider = HopLib:name_provider()
+					unit_name = name_provider:name_by_id(tweak_table)
+				end
+				
+				do 
+					local substrings = {
+						{s = unit_name,color=unit_color},
+						{s = " was defeated!",color=nil}
+					}
+					
+					local target_color_data = {}
+					local s_all = ""
+					local c = 0
+					for i,v in ipairs(substrings) do 
+						local str = v.s
+						local col = v.color
+						s_all = s_all .. str
+						local s_start = c
+						local s_end = s_start + utf8.len(str)
+						if col then
+							table.insert(target_color_data,{
+								s_start = s_start,
+								s_end = s_end,
+								color = col
+							})
+						end
+						c = s_end
+					end
+					addon.add_text(addon,s_all,target_color_data)
+				end
+			end
+		end)
+		--]]
+		
+		Hooks:PostHook(HuskPlayerMovement,"sync_movement_state","mhudu_pkmdr_teammate_state_change",function(self,state,down_time)
+			local unit_name = managers.criminals:character_name_by_unit(self._unit)
+			local state_desc = state and addon.state_lookups[state]
+			if unit_name and state_desc then 
+				local unit_color = Color.yellow
+				local substrings = {
+					{s = unit_name,color=unit_color},
+					{s = state_desc,color=nil}
+				}
+				
+				local color_data = {}
+				local s_all = ""
+				local c = 0
+				for i,v in ipairs(substrings) do 
+					local str = v.s
+					local col = v.color
+					s_all = s_all .. str
+					local s_start = c
+					local s_end = s_start + utf8.len(str)
+					if col then
+						table.insert(color_data,{
+							s_start = s_start,
+							s_end = s_end,
+							color = col
+						})
+					end
+					c = s_end
+				end
+				addon.add_text(addon,s_all,color_data)
+			end
+		end)
+		
+		if not alive(player_unit) then 
+			return
+		end
+		--[[ does not work
+		player_unit:character_damage():add_listener("mhudu_pkmdr_on_player_death",{"death"},function(unit,damage_info)
+			local player_color = Color.yellow
+			local player_name = managers.network.account:username()
+			local substrings = {
+				{s = "Oh no! ",color=nil},
+				{s = player_name,color=player_color},
+				{s = " was defeated!",color=nil}
+			}
+			
+			local color_data = {}
+			local s_all = ""
+			local c = 0
+			for i,v in ipairs(substrings) do 
+				local str = v.s
+				local col = v.color
+				s_all = s_all .. str
+				local s_start = c
+				local s_end = s_start + utf8.len(str)
+				if col then
+					table.insert(color_data,{
+						s_start = s_start,
+						s_end = s_end,
+						color = col
+					})
+				end
+				c = s_end
+			end
+			addon.add_text(addon,s_all,color_data)
+		end)
+		--]]
 	end,
 	destroy_func = function(addon)
 		local pm = managers.player
+		local player_unit = pm:local_player()
 		pm:unregister_message(Message.OnEnemyShot, "mhudu_pkmdr_onenemyshot")
+--		pm:unregister_message(Message.OnEnemyKilled, "mhudu_pkmdr_onenemykilled")
+		pm:unregister_message(Message.OnPlayerDodge, "mhudu_pkmdr_onplayerdodge")
+		if alive(player_unit) then 
+--			player_unit:character_damage():remove_listener("mhudu_pkmdr_on_player_death")
+		end
+		Hooks:RemovePostHook("mhudu_pkmdr_teammate_state_change")
 	end,
-	update_func = function(addon,t,dt)
-	end,
+--	update_func = function(addon,t,dt) end,
 	add_text = function(addon,text_string,color_range_data)
 		local feed_text_bound = addon.feed_text_bound
 		if alive(feed_text_bound) then
@@ -309,7 +497,6 @@ return addon_id,{
 			end
 			
 			table.insert(text_objects,1,new_feed_message)
---			table.insert(text_objects,#text_objects + 1,new_feed_message)
 			
 			local num_lines = new_feed_message:number_of_lines()
 			local line_height = new_feed_message:line_height()
@@ -327,172 +514,19 @@ return addon_id,{
 					local text_obj = text_objects[i] 
 					if alive(text_obj) then 
 						local to_y = total_lines * line_height
-						local current_y = text_obj:y()
---						local delta_y = - (to_y - current_y)
+--						local current_y = text_obj:y()
+						text_obj:set_y(to_y)
+
+--						local delta_y =  - (to_y - current_y)
 --						text_obj:stop()
 --						text_obj:animate(addon.animate_text_conveyor,0,delta_y,animate_duration)
-						if true then 
-							text_obj:set_y(to_y)
-						else
-							MHUDU:animate_stop(text_obj)
-							MHUDU:animate(text_obj,"animate_move_sq",nil,animate_duration,nil,nil,current_y,to_y)
-						end
+--						MHUDU:animate_stop(text_obj)
+--						MHUDU:animate(text_obj,"animate_move_simple",nil,animate_duration,nil,nil,current_y,to_y)
+
 						total_lines = total_lines + text_obj:number_of_lines()
 					end
 				end
 			end
-			
-			
-			
-			--[[
-	--		local _x,_y,_w,_h = new_feed_message:text_rect()
-			local _h = new_feed_message:line_height() * new_feed_message:number_of_lines()
-			
-			local closest_object = text_objects[1]
-			if closest_object and alive(closest_object) then
-				local _,_,_,c_h = closest_object:text_rect()
-				new_feed_message:set_y(closest_object:y() + c_h)
-			end
-			
-			local distance = 0
-			local msg_bottom = new_feed_message:y() + _h
-			if msg_bottom > feed_text_bound:h() then
-				local new_message_position = feed_text_bound:h() - _h
---				new_feed_message:animate(addon.animate_text_conveyor,0,new_feed_message:y() - new_message_position,animate_duration)
-				
-				distance = _h + (new_feed_message:y() - new_message_position)
-			end
-
-			table.insert(text_objects,1,new_feed_message)
-			for i = #text_objects,1,-1 do 
-				if i > 5 then 
-					local this = table.remove(text_objects,i)
-					this:parent():remove(this)
-				else
-					local text_obj = text_objects[i] 
-					if alive(text_obj) then 
-						local thred = text_obj:animate(addon.animate_text_conveyor,0,-distance,animate_duration)
-					end
-				end
-			end
-			
-			--]]
-			
-				--[[
-				if alive(sdfdsf) then 
-					sdfdsf:parent():remove(sdfdsf)
-				end
-				sdfdsf = closest_object:parent():rect({
-					name = "sdfdsf",
-					x = closest_object:x(),
-					y = closest_object:y() + c_h,
-					w = 20,
-					h = 20,
-					alpha = 0.5,
-					layer = 10,
-					color = Color.blue
-				})
-				
-				if alive(sdkjfhd) then 
-					sdkjfhd:parent():remove(sdkjfhd)
-				end
-				sdkjfhd = new_feed_message:parent():rect({
-					name = "sdkjfhd",
-					x = new_feed_message:x(),
-					y = new_feed_message:y() + _h,
-					w = 20,
-					h = 20,
-					alpha = 0.5,
-					layer = 10,
-					color = Color.red
-				})
-				--]]
---			local msg_bottom = new_feed_message:y() + _h
---				move_messages_up = true
----					new_feed_message:animate(addon.animate_text_conveyor,0,(feed_text_bound:h() - (closest_object:y() + c_h)),animate_duration)
-				
---				new_feed_message:animate(addon.animate_text_conveyor,0,(feed_text_bound:h() - (closest_object:y() + c_h)),animate_duration)
-
-			
-			--[[
-			addon.most_recent_message = new_feed_message
-			local feed_scroller_h = feed_text_scroller:h()
-			local text_objects = addon.feed_text_objects
-			local max_num_text_objects = addon.max_num_text_objects
-			local y_margin = 0
-			local start_y = 0
-			local distance = 0
-			local text_height = 0
-			local prev_message = addon.most_recent_message 
-			local prev_world_bottom = feed_text_scroller:world_bottom()
-			if prev_message and alive(prev_message) then 
-				local _x,_y,_w,_h = prev_message:text_rect()
-				new_feed_message:set_y(prev_message:y() + _h)
-			end
-			
-			local _x,_y,_w,_h = new_feed_message:text_rect()
-			
-			feed_text_scroller:set_h(feed_text_scroller:h() + _h)
-			
-			local feed_text_bound_world_bottom = addon.feed_text_bound:world_bottom()
-			if prev_world_bottom + _h > feed_text_bound_world_bottom then 
-				
-				feed_text_scroller:stop()
-				local dis = (feed_text_bound_world_bottom - feed_text_scroller:world_bottom())
-				feed_text_scroller:animate(addon.animate_text_conveyor,0,dis,animate_duration)
-			end
-			--]]
-			
---			local feed_world_bottom = feed_text_scroller:world_bottom()
---			local delta = feed_world_bottom - (_y + _h)
---			if delta > 0 then 
-				
---			end
-			
-			--[[
-			do 
-				local closest_object = text_objects[1]
-				if closest_object and alive(closest_object) then 
-					local _x,_y,_w,_h = closest_object:text_rect()
-					new_feed_message:set_y(closest_object:y() + _h + y_margin)
-				end
-			end
-			
-			local _,_,_,_h = new_feed_message:text_rect()
-			local move_messages_up
-			if new_feed_message:y() + _h > feed_text_bound_h then 
---				distance = new_feed_message:y() - (feed_text_bound_h - _h)
-				text_height = _h
---				distance = distance + _h
-				
-				move_messages_up = true
-			end
-			if color_range_data then 
-				for k,v in ipairs(color_range_data) do 
-					new_feed_message:set_range_color(v.s_start,v.s_end,v.color)
-				end
-			end
-			
-			new_feed_message:animate(addon.animate_text_conveyor,0,-_h,animate_duration)
-
-			for i = #addon.feed_text_objects,1,-1 do 
-				local text_obj = text_objects[i] 
-				if i > max_num_text_objects then 
-					local stale_text = table.remove(text_objects,i)
-					if alive(stale_text) then 
-						stale_text:parent():remove(stale_text)
-					end
-				elseif alive(text_obj) then 
-					if move_messages_up then 
-						local thred = text_obj:animate(addon.animate_text_conveyor,0,-text_height,animate_duration)
-					end
-				end
-			end
-			table.insert(text_objects,1,new_feed_message)
-			--]]
-			
-			
-			
 		end
 		
 	end,
