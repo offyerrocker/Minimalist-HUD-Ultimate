@@ -13,6 +13,45 @@ Hooks:Add("LoadQuickAnimateLibrary","MHUDU_AddQuickAnimateLibrary",function(pare
 		end
 	end
 	
+	function parent.animate_move_sq(o,t,dt,start_t,duration,from_x,to_x,from_y,to_y)
+		local ratio = math.pow((t - start_t) / duration,2)
+		
+		if ratio >= 1 then 
+			if to_x then 
+				o:set_x(to_x)
+			end 
+			if to_y then 
+				o:set_y(to_y)
+			end
+			return true
+		end
+		if from_x and to_x then 
+			o:set_x(from_x + ((to_x - from_x) * ratio))
+		end
+		if start_y and to_y then 
+			o:set_y(start_y + ((to_y - start_y) * ratio))
+		end
+	end
+	
+	function parent.animate_move_simple(o,t,dt,start_t,duration,from_x,to_x,from_y,to_y)
+		local ratio = (t - start_t) / duration
+		
+		if ratio >= 1 then 
+			if to_x then 
+				o:set_x(to_x)
+			end 
+			if to_y then 
+				o:set_y(to_y)
+			end
+			return true
+		end
+		if from_x and to_x then 
+			o:set_x(from_x + ((to_x - from_x) * ratio))
+		end
+		if start_y and to_y then 
+			o:set_y(start_y + ((to_y - start_y) * ratio))
+		end
+	end
 	
 	
 end)

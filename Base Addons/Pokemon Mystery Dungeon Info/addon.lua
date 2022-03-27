@@ -9,6 +9,7 @@
 --			acquire mission equipment
 --			use mission equipment
 
+--!! current dt/move()-based animate function is inaccurate. use absolute positions with set_pos. this will ensure more accurate movement while also fixing the bunching-up problem while animating rapid messages
 
 local addon_id = "mysterydungeon"
 return addon_id,{
@@ -40,7 +41,8 @@ return addon_id,{
 	},
 	bg_texture = "guis/textures/mhudu/pkmn_mdr_bg",
 	message_count = 0,
-	max_num_text_objects = 24,
+	font_size = 24,
+--	max_num_text_objects = 24,
 	feed_text_objects = {},
 	weapon_name_by_unit = {},
 	create_func = function(addon,parent_panel)
@@ -133,9 +135,17 @@ return addon_id,{
 			layer = 3
 		})
 		addon.feed_text_bound = feed_text_bound
+		--[[
+		local feed_text_scroller = feed_panel:panel({
+			name = "feed_text_scroller"
+--			h = 0
+		})
+		addon.feed_text_scroller = feed_text_scroller
+		--]]
 	end,
 	register_func = function(addon)
-	
+		addon.max_lines = math.floor(addon.feed_text_bound:h() / addon.font_size)
+		
 		addon.get_weapon_name(addon,1)
 		addon.get_weapon_name(addon,2)
 	
@@ -269,23 +279,13 @@ return addon_id,{
 	add_text = function(addon,text_string,color_range_data)
 		local feed_text_bound = addon.feed_text_bound
 		if alive(feed_text_bound) then
+			local max_lines = addon.max_lines
 			local text_objects = addon.feed_text_objects
-			local max_num_text_objects = addon.max_num_text_objects
 			
 			local font_shadow = addon.fonts.shadow
+			local font_size = addon.font_size
 			
-			local y_margin = 24
---			local distance = -y_margin
-			local feed_text_bound_h = feed_text_bound:h()
-			local start_y = feed_text_bound_h + y_margin
-			local closest_object = text_objects[1]
-			--[[
-			if closest_object and alive(closest_object) then 
-				local _x,_y,_w,_h = closest_object:text_rect()
-				distance = _h
-				start_y = (_y + _h) + y_margin
-			end
-			--]]
+			local animate_duration = 0.5
 			local message_count = addon.message_count + 1
 			addon.message_count = message_count
 			
@@ -295,16 +295,13 @@ return addon_id,{
 				text = text_string,
 				color = Color.white,
 				x = 0,
-				y = start_y,
+				y = 0,
+--				rotation = 0.0001, --debug for disabling clipping
 				font = font_shadow,
-				font_size = 24,
+				font_size = font_size,
 				wrap = true,
 				layer = 3
 			})
-			
-			local _,_,_,_h = new_feed_message:text_rect()
-			local distance = _h + y_margin + y_margin + y_margin
-			
 			if color_range_data then 
 				for k,v in ipairs(color_range_data) do 
 					new_feed_message:set_range_color(v.s_start,v.s_end,v.color)
@@ -312,6 +309,172 @@ return addon_id,{
 			end
 			
 			table.insert(text_objects,1,new_feed_message)
+--			table.insert(text_objects,#text_objects + 1,new_feed_message)
+			
+			local num_lines = new_feed_message:number_of_lines()
+			local line_height = new_feed_message:line_height()
+			local total_lines = 0
+			for i=#text_objects,1,-1 do 
+				if total_lines > max_lines or i >= max_lines then 
+				
+					local text_obj = table.remove(text_objects,i)
+					if alive(text_obj) then
+--						text_obj:stop()
+--						MHUDU:animate_stop(text_obj)
+						text_obj:parent():remove(text_obj)
+					end
+				else
+					local text_obj = text_objects[i] 
+					if alive(text_obj) then 
+						local to_y = total_lines * line_height
+						local current_y = text_obj:y()
+--						local delta_y = - (to_y - current_y)
+--						text_obj:stop()
+--						text_obj:animate(addon.animate_text_conveyor,0,delta_y,animate_duration)
+						if true then 
+							text_obj:set_y(to_y)
+						else
+							MHUDU:animate_stop(text_obj)
+							MHUDU:animate(text_obj,"animate_move_sq",nil,animate_duration,nil,nil,current_y,to_y)
+						end
+						total_lines = total_lines + text_obj:number_of_lines()
+					end
+				end
+			end
+			
+			
+			
+			--[[
+	--		local _x,_y,_w,_h = new_feed_message:text_rect()
+			local _h = new_feed_message:line_height() * new_feed_message:number_of_lines()
+			
+			local closest_object = text_objects[1]
+			if closest_object and alive(closest_object) then
+				local _,_,_,c_h = closest_object:text_rect()
+				new_feed_message:set_y(closest_object:y() + c_h)
+			end
+			
+			local distance = 0
+			local msg_bottom = new_feed_message:y() + _h
+			if msg_bottom > feed_text_bound:h() then
+				local new_message_position = feed_text_bound:h() - _h
+--				new_feed_message:animate(addon.animate_text_conveyor,0,new_feed_message:y() - new_message_position,animate_duration)
+				
+				distance = _h + (new_feed_message:y() - new_message_position)
+			end
+
+			table.insert(text_objects,1,new_feed_message)
+			for i = #text_objects,1,-1 do 
+				if i > 5 then 
+					local this = table.remove(text_objects,i)
+					this:parent():remove(this)
+				else
+					local text_obj = text_objects[i] 
+					if alive(text_obj) then 
+						local thred = text_obj:animate(addon.animate_text_conveyor,0,-distance,animate_duration)
+					end
+				end
+			end
+			
+			--]]
+			
+				--[[
+				if alive(sdfdsf) then 
+					sdfdsf:parent():remove(sdfdsf)
+				end
+				sdfdsf = closest_object:parent():rect({
+					name = "sdfdsf",
+					x = closest_object:x(),
+					y = closest_object:y() + c_h,
+					w = 20,
+					h = 20,
+					alpha = 0.5,
+					layer = 10,
+					color = Color.blue
+				})
+				
+				if alive(sdkjfhd) then 
+					sdkjfhd:parent():remove(sdkjfhd)
+				end
+				sdkjfhd = new_feed_message:parent():rect({
+					name = "sdkjfhd",
+					x = new_feed_message:x(),
+					y = new_feed_message:y() + _h,
+					w = 20,
+					h = 20,
+					alpha = 0.5,
+					layer = 10,
+					color = Color.red
+				})
+				--]]
+--			local msg_bottom = new_feed_message:y() + _h
+--				move_messages_up = true
+---					new_feed_message:animate(addon.animate_text_conveyor,0,(feed_text_bound:h() - (closest_object:y() + c_h)),animate_duration)
+				
+--				new_feed_message:animate(addon.animate_text_conveyor,0,(feed_text_bound:h() - (closest_object:y() + c_h)),animate_duration)
+
+			
+			--[[
+			addon.most_recent_message = new_feed_message
+			local feed_scroller_h = feed_text_scroller:h()
+			local text_objects = addon.feed_text_objects
+			local max_num_text_objects = addon.max_num_text_objects
+			local y_margin = 0
+			local start_y = 0
+			local distance = 0
+			local text_height = 0
+			local prev_message = addon.most_recent_message 
+			local prev_world_bottom = feed_text_scroller:world_bottom()
+			if prev_message and alive(prev_message) then 
+				local _x,_y,_w,_h = prev_message:text_rect()
+				new_feed_message:set_y(prev_message:y() + _h)
+			end
+			
+			local _x,_y,_w,_h = new_feed_message:text_rect()
+			
+			feed_text_scroller:set_h(feed_text_scroller:h() + _h)
+			
+			local feed_text_bound_world_bottom = addon.feed_text_bound:world_bottom()
+			if prev_world_bottom + _h > feed_text_bound_world_bottom then 
+				
+				feed_text_scroller:stop()
+				local dis = (feed_text_bound_world_bottom - feed_text_scroller:world_bottom())
+				feed_text_scroller:animate(addon.animate_text_conveyor,0,dis,animate_duration)
+			end
+			--]]
+			
+--			local feed_world_bottom = feed_text_scroller:world_bottom()
+--			local delta = feed_world_bottom - (_y + _h)
+--			if delta > 0 then 
+				
+--			end
+			
+			--[[
+			do 
+				local closest_object = text_objects[1]
+				if closest_object and alive(closest_object) then 
+					local _x,_y,_w,_h = closest_object:text_rect()
+					new_feed_message:set_y(closest_object:y() + _h + y_margin)
+				end
+			end
+			
+			local _,_,_,_h = new_feed_message:text_rect()
+			local move_messages_up
+			if new_feed_message:y() + _h > feed_text_bound_h then 
+--				distance = new_feed_message:y() - (feed_text_bound_h - _h)
+				text_height = _h
+--				distance = distance + _h
+				
+				move_messages_up = true
+			end
+			if color_range_data then 
+				for k,v in ipairs(color_range_data) do 
+					new_feed_message:set_range_color(v.s_start,v.s_end,v.color)
+				end
+			end
+			
+			new_feed_message:animate(addon.animate_text_conveyor,0,-_h,animate_duration)
+
 			for i = #addon.feed_text_objects,1,-1 do 
 				local text_obj = text_objects[i] 
 				if i > max_num_text_objects then 
@@ -320,11 +483,15 @@ return addon_id,{
 						stale_text:parent():remove(stale_text)
 					end
 				elseif alive(text_obj) then 
-					local duration = 0.5
-					
-					local thred = text_obj:animate(addon.animate_text_conveyor,0,-distance,duration)
+					if move_messages_up then 
+						local thred = text_obj:animate(addon.animate_text_conveyor,0,-text_height,animate_duration)
+					end
 				end
 			end
+			table.insert(text_objects,1,new_feed_message)
+			--]]
+			
+			
 			
 		end
 		
