@@ -1,4 +1,6 @@
 todo:
+	- option to hide vanilla hud 
+	
 	- only load assets for enabled addons
 	- go over enabled/disabled mid-heist behavior
 		- require restart to affect changes? or only for enabling addons? <-- probably this
@@ -7,13 +9,13 @@ todo:
 	- hud categories
 		- re-check categories at any change (user changing any addon toggles)
 	- toggle/button for manually enabling/disabling an addon
-	- dynamically generate menus to enable/disable any addons
 	
 
 
 
 post-release:
 	- auto-updater for addons
+		- hook system for advanced addons to allow beardlib auto-updating addons
 		-backport to ach
 
 

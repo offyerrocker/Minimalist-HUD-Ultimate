@@ -61,7 +61,7 @@ return addon_id,{
 		local bg_texture = addon.bg_texture
 		
 		local x_margin_ratio = 0.4
-		local y_margin_ratio = 0.25
+		local y_margin_ratio = 0.33
 		
 		local feed_panel_w = 100 * bg_ratio
 		local feed_panel_h = 100

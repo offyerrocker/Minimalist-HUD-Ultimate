@@ -1,0 +1,11 @@
+All code in this addon (contents of DOOM HUD folder) was written solely by Offyerrocker.
+
+Texture assets were ripped from DOOM/DOOM II files by:
+	ULTIMECIA
+	HYLIANSONIC
+	Hax4Ever
+	SUPERDAVE938
+	SuperPiter
+	
+The use of these original assets is protected under GNU/GPL.
+	

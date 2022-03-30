@@ -250,8 +250,8 @@ return addon_id,{
 				
 				if true then
 					local parent = clippy_body:parent()
-					clippy_body:set_right(parent:w() - 100)
-					clippy_body:set_bottom(parent:h() - 100)
+					clippy_body:set_right(parent:w() - 200)
+					clippy_body:set_bottom(parent:h() - 200)
 					addon.default_position = {clippy_body:position()}
 				else
 					--todo place above health bar
