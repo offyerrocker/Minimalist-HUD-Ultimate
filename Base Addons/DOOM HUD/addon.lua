@@ -326,8 +326,7 @@ return addon_id,{
 		
 		MHUDU:AddListener("set_criminal_ammo_data","mhudu_doomhud_criminalammochanged",{
 			callback = function(i,type,max_clip,current_clip,current_left,max,...)
-				if i == HUDManager.PLAYER_PANEL then 
---					logall({type,max_clip,current_clip,current_left,max,...})
+				if i == HUDManager.PLAYER_PANEL then
 					if type == "primary" then 
 						addon.reserve_ammo_current_1:set_text(string.format("%02i",math.clamp(current_left - current_clip,0,999)))
 						addon.reserve_ammo_total_1:set_text(string.format("%02i",math.clamp(max - max_clip,0,999)))

@@ -33,6 +33,9 @@ do
 	
 	MHUDUCore.file_util = _G.FileIO
 	MHUDUCore.path_util = BeardLib.Utils.Path
+	MHUDUCore.override_filetypes = {
+		png = "texture"
+	}
 end
 
 
@@ -554,14 +557,14 @@ function MHUDUCore:LoadAddons()
 	Hooks:Call("MinimalistHUDUltimate_LoadAddons",self)
 	--users who want more complex addon behavior may wish to execute their code via SBLT Hooks instead
 
-				
+	
 	local cached_extensions = {}
 	local function add_asset(root_path,file_path)
 		local find_ext_1,find_ext_2 = string.find(file_path,"%.")
 		if find_ext_1 and find_ext_2 then 
 			local file_path_no_extension = string.sub(file_path,1,find_ext_1 - 1)
 			local extension = string.sub(file_path,find_ext_2 + 1)
-			
+			extension = self.override_filetypes[extension] or extension
 			local ext_ids = cached_extensions[extension] or Idstring(extension)
 			cached_extensions[extension] = cached_extensions[extension] or ext_ids
 --			self:Log("Added: " .. tostring(extension) .. " " .. tostring(file_path_no_extension) .. " " .. tostring(root_path) .. " " .. tostring(file_path))

@@ -9,8 +9,6 @@ todo:
 	- hud categories
 		- re-check categories at any change (user changing any addon toggles)
 	- toggle/button for manually enabling/disabling an addon
-	
-
 
 
 post-release:
@@ -30,6 +28,7 @@ concepts:
 	- favor elements that have not been picked (sort by tag)
 
 
+		
 
 	hud element categories:
 		actual:
@@ -73,6 +72,7 @@ concepts:
 			monster hunter
 			deep rock galactic?
 			miyamoto and gunicorn (rdr horse)
+			untitled goose game goose?
 			the division
 			clippy
 			subnautica 
