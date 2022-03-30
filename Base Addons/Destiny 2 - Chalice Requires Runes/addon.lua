@@ -1,8 +1,8 @@
 return "slotyourchalice",{
-	name = "Chalice Requires Runes",
-	desc = "Popup from Destiny 2 Season of Opulence",
+	name = "Destiny 2 - Menagerie Popup",
+	desc = "Popup from Destiny 2's Season of Opulence",
 	autodetect_assets = true,
-	layer = 100,
+	layer = 77,
 	categories = {
 		"misc" --this addon does not show any useful information
 	},

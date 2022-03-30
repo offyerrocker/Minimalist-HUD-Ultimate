@@ -156,8 +156,8 @@ function FakeText:set_text(text)
 		end
 		for i=it_i,it_m,it_d do
 			local char_raw = string.sub(text,i,i)
-			local _char = fake_font_data.special_char_lookup[char_raw] or char_raw
-			local glyph_data = glyphs[_char]
+			local char_name = fake_font_data.special_char_lookup[char_raw] or char_raw
+			local glyph_data = glyphs[char_name]
 			if glyph_data then 
 				
 				local w = glyph_data.w
@@ -165,12 +165,12 @@ function FakeText:set_text(text)
 				local kern = glyph_data.kern or 0
 				local new_character
 				
-				if _char == " " then 
+				if char_name == " " then 
 	--				w = 0
 					kern = 0
 				else
 					new_character = panel:bitmap({
-						name = _char .. "_" .. i,
+						name = char_name .. "_" .. i,
 						texture = fake_font_data.atlas,
 						texture_rect = glyph_data.rect,
 						x = x,
@@ -184,7 +184,7 @@ function FakeText:set_text(text)
 					new_character:set_bottom(line_num * leading)
 					
 				end
-				table.insert(self.characters,#self.characters + 1,{bitmap = new_character, character = _char})
+				table.insert(self.characters,#self.characters + 1,{gui_object = new_character, character = char_name})
 				
 
 				x = x + ((kern + w + tracking) * it_sign)
@@ -258,6 +258,16 @@ function FakeText:y()
 	return self.panel:y()
 end
 
+function FakeText:set_range_color(r1,r2,c)
+	for i=r1,r2,math.sign(r2-r1) do 
+		local char_data = self.characters[i]
+		
+		if char_data and alive(char_data.gui_object) then 
+			char_data.gui_object:set_color(c)
+		end
+		
+	end
+end
 
 
 --[[
