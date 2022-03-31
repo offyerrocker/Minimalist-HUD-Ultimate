@@ -22,3 +22,7 @@ Asset sources:
 		Origin: This is the text log that displays any in-game battle information, as well as speech from NPCs. 
 		Proc circumstances: 
 			(planned) Many actions will send a message to the battle log, including: any time any unit fires a weapon, an enemy takes damage or dies, a player goes down, enters custody, changes state (tased, cloaked, etc), uses deployables, acquires mission equipment, etc. 
+			
+	- Runescape: 
+		Screencap from https://www.rune-server.ee/runescape-development/rs2-client/downloads/340037-317-client-loading-original-317-cache.html
+		https://runescape.wiki/w/Old_School_RuneScape#/media/File:Old_School_HUD.png

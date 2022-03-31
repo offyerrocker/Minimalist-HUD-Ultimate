@@ -128,3 +128,19 @@ end
 function MHUDU:feed_ammo_data(i,...)
 	self:CallListeners("set_criminal_ammo_data",i,...)
 end
+
+function MHUDU:feed_add_mission_equipment(i,data,...)
+	self:CallListeners("set_criminal_mission_equipment",i,data,...)
+end
+
+function MHUDU:feed_set_mission_equipment_amount(i,equipment_id,amount,...)
+	self:CallListeners("set_criminal_mission_equipment_amount",i,equipment_id,amount,...)
+end
+
+function MHUDU:feed_remove_mission_equipment(i,equipment_id,...)
+	self:CallListeners("remove_criminal_mission_equipment",i,equipment_id,...)
+end
+
+function MHUDU:feed_clear_mission_equipment(i,...)
+	self:CallListeners("clear_criminal_mission_equipment",i,...)
+end

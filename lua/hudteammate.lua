@@ -38,3 +38,19 @@ end)
 Hooks:PostHook(HUDTeammate,"set_ammo_amount_by_type","MHUDU_hudteammate_setammoamounts",function(self,...)
 	MHUDU:feed_ammo_data(self._id,...)
 end)
+
+Hooks:PostHook(HUDTeammate,"add_special_equipment","MHUDU_hudteammate_setspecialequipment",function(self,data,...)
+	MHUDU:feed_add_mission_equipment(self._id,data,...)
+end)
+
+Hooks:PostHook(HUDTeammate,"set_special_equipment_amount","MHUDU_hudteammate_setspecialequipmentamount",function(self,equipment_id,amount,...)
+	MHUDU:feed_set_mission_equipment_amount(self._id,equipment_id,amount,...)
+end)
+
+Hooks:PostHook(HUDTeammate,"remove_special_equipment","MHUDU_hudteammate_removespecialequipment",function(self,equipment_id,...)
+	MHUDU:feed_remove_mission_equipment(self._id,equipment_id,...)
+end)
+
+Hooks:PostHook(HUDTeammate,"clear_special_equipment","MHUDU_hudteammate_clearallspecialequipment",function(self,...)
+	MHUDU:feed_clear_mission_equipment(self._id,...)
+end)
