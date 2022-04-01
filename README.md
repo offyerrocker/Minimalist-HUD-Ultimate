@@ -10,6 +10,7 @@ All code used in all listed addons was written by Offyerrocker.
 Asset sources vary.
 
 HUD Element Sources:
+
 	- Dark Souls Death Screen
 		Source:
 			Dark Souls
