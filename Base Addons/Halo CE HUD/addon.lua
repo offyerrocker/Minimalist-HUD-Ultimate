@@ -11,6 +11,8 @@ return "hce_hud",{
 		"crosshair"
 	},
 	hud_color = Color(121/255,197/255,255/255),
+	hud_color_yellow = Color(255/255,195/255,74/255),
+	hud_color_empty = Color(255/255,115/255,115/255),
 	atlas_texture = "guis/textures/mhudu/haloce_atlas",
 	atlas_data = {
 		crosshair = {
@@ -88,6 +90,8 @@ return "hce_hud",{
 		addon.parent_panel = parent_panel
 		addon.hce_font_digits = FakeFont:new(addon.fake_font_data)
 		
+		local hud_cx,hud_cy = parent_panel:center()
+		
 		local hud_color = addon.hud_color
 		local atlas_texture = addon.atlas_texture
 		local atlas_data = addon.atlas_data
@@ -99,7 +103,7 @@ return "hce_hud",{
 			layer = 1
 		})
 		addon.crosshair = crosshair
-		crosshair:set_center(parent_panel:center())
+		crosshair:set_center(hud_cx,hud_cy)
 		
 		
 		local shields_x = -24
@@ -148,8 +152,10 @@ return "hce_hud",{
 			texture = atlas_texture,
 			texture_rect = atlas_data.health_icon_outline,
 			color = hud_color,
+			alpha = 0.66,
 			layer = 3
 		})
+		addon.health_icon_outline = health_icon_outline
 		health_icon_outline:set_x(shields_outline:x() + health_icon_x)
 		health_icon_outline:set_y(shields_outline:y() + health_icon_y)
 --		health_icon_outline:set_bottom(shields_outline:bottom() + health_icon_y)
@@ -159,8 +165,8 @@ return "hce_hud",{
 			texture_rect = atlas_data.health_icon_fill,
 			layer = 2
 		})
-		health_icon_fill:set_position(health_icon_outline:position())
-		
+		health_icon_fill:set_center(health_icon_outline:center())
+		addon.health_icon_fill = health_icon_fill
 		local grenade_x = 168
 		local grenade_y = 24
 		local grenade_bar_outline = parent_panel:bitmap({
@@ -243,14 +249,68 @@ return "hce_hud",{
 			y = ammo_bar_y + 3
 		})
 		addon.mag_counter = mag_counter
+		
+		
+		
+		local indicator_reload = parent_panel:bitmap({
+			name = "indicator_reload",
+			texture = atlas_texture,
+			texture_rect = atlas_data.indicator_reload,
+			layer = 3,
+			color = hud_color,
+			alpha = 0,
+			visible = true
+		})
+		addon.indicator_reload = indicator_reload
+		indicator_reload:set_left(crosshair:right() + 8)
+		indicator_reload:set_bottom(crosshair:center_y() - 2)
+		
+		local indicator_low_ammo = parent_panel:bitmap({
+			name = "indicator_low_ammo",
+			texture = atlas_texture,
+			texture_rect = atlas_data.indicator_low_ammo,
+			layer = 3,
+			color = hud_color,
+			alpha = 0,
+			visible = true
+		})
+		addon.indicator_low_ammo = indicator_low_ammo
+		indicator_low_ammo:set_left(crosshair:right() + 8)
+		indicator_low_ammo:set_top(crosshair:center_y() + 2)
+		
+		local indicator_no_ammo = parent_panel:bitmap({
+			name = "indicator_no_ammo",
+			texture = atlas_texture,
+			texture_rect = atlas_data.indicator_no_ammo,
+			layer = 3,
+			color = hud_color,
+			alpha = 0,
+			visible = true
+		})
+		addon.indicator_no_ammo = indicator_no_ammo
+		indicator_no_ammo:set_left(crosshair:right() + 8)
+		indicator_no_ammo:set_top(crosshair:center_y() + 2)
+		
+		local indicator_no_grenades = parent_panel:bitmap({
+			name = "indicator_no_grenades",
+			texture = atlas_texture,
+			texture_rect = atlas_data.indicator_no_grenades,
+			layer = 3,
+			color = hud_color,
+			alpha = 0,
+			visible = true
+		})
+		addon.indicator_no_grenades = indicator_no_grenades
+		indicator_no_grenades:set_right(crosshair:left() - 8)
+		indicator_no_grenades:set_bottom(crosshair:center_y() - 2)
 	end,
 	set_health = function(addon,current,total)
 		local color = addon.hud_color
 		local percent = current/total
 		if percent <= 0.25 then 
-			color = Color.red
+			color = addon.hud_color_empty
 		elseif percent <= 0.5 then 
-			color = Color.yellow
+			color = addon.hud_color_yellow
 		end
 		
 		local num_ticks = #addon.health_ticks
@@ -266,6 +326,7 @@ return "hce_hud",{
 				end
 			end
 		end
+		addon.health_icon_fill:set_color(color)
 	end,
 	set_shields = function(addon,current,total)
 		local percent = current/total
@@ -327,8 +388,8 @@ return "hce_hud",{
 				texture_rect = texture_rect,
 				x = x,
 				y = y,
+				alpha = 0.25,
 				color = hud_color,
-				alpha = 1,
 				layer = 3
 			})
 			
@@ -364,7 +425,67 @@ return "hce_hud",{
 		end
 	end,
 	update_func = function(addon,t,dt)
-	
+		local tau = 360
+		local flash_speed = 2 * tau -- seconds per cycle
+			--one cycle equals the time it takes to complete: (flashes_shown + flashes_hidden)
+		local _t = flash_speed * t
+		local flashes_shown = 3
+		local flashes_hidden = 1
+		local m = (tau * flashes_shown) - (_t % (tau * (flashes_shown + flashes_hidden)))
+		local flash_alpha
+		if m > 0 then 
+--			flash_alpha = math.sin(_t)
+			flash_alpha = math.clamp(math.sin(_t),0,1)
+		else
+			flash_alpha = 0
+		end
+		
+		local pm = managers.player
+		local peer_id = managers.network:session():local_peer():id()
+		
+		local grenades_amount = pm:get_grenade_amount(peer_id)
+		
+		if grenades_amount == 0 and pm:has_grenade(peer_id) then 
+			addon.indicator_no_grenades:set_alpha(flash_alpha)
+		end
+		
+		
+		local player = pm:local_player()
+		if alive(player) then 
+			local equipped_weapon = player:inventory():equipped_unit()
+			local weapon_base = alive(equipped_weapon) and equipped_weapon:base()
+			if weapon_base then
+				local mag = weapon_base:get_ammo_remaining_in_clip()
+				local mag_max = weapon_base:get_ammo_max_per_clip()
+				local mag_percent = mag / mag_max
+				local reserves = weapon_base:get_ammo_total() - mag
+				local reserves_max = weapon_base:get_max_ammo_excluding_clip()
+				local reserves_percent = reserves/reserves_max
+				
+				if reserves_percent == 0 then 
+					if mag_percent == 0 then 
+						addon.indicator_no_ammo:set_alpha(flash_alpha)
+					else
+						addon.indicator_no_ammo:set_alpha(0)
+					end
+					addon.indicator_low_ammo:set_alpha(0)
+					addon.indicator_reload:set_alpha(0)
+				else
+					addon.indicator_no_ammo:set_alpha(0)
+					if mag_percent <= 0.25 then 
+						addon.indicator_reload:set_alpha(flash_alpha)
+					else
+						addon.indicator_reload:set_alpha(0)
+					end
+					
+					if reserves_percent <= 0.25 then 
+						addon.indicator_low_ammo:set_alpha(flash_alpha)
+					else
+						addon.indicator_low_ammo:set_alpha(0)
+					end
+				end
+			end
+		end
 	end,
 	register_func = function(addon)
 		local player = managers.player:local_player()
@@ -380,7 +501,6 @@ return "hce_hud",{
 					local base = weapon.unit:base()
 					if base then 
 	--					managers.hud:set_ammo_amount(id, weapon.unit:base():ammo_info())
-	--base:get_ammo_remaining_in_clip()
 						addon.generate_ammo_ticks(addon,id,base:get_ammo_max_per_clip())
 					end
 				end
@@ -411,7 +531,13 @@ return "hce_hud",{
 					elseif type == "secondary" then 
 						addon:set_ammo_ticks(1,current_clip,max_clip)
 					end 
-					addon.mag_counter:set_text(string.format("%02i",math.clamp(current_left - current_clip,0,999)))
+					local reserves = math.clamp(current_left - current_clip,0,999)
+					addon.mag_counter:set_text(string.format("%02i",reserves))
+					if reserves <= 0 then 
+						addon.ammo_bar_fill:set_color(addon.hud_color_empty)
+					else
+						addon.ammo_bar_fill:set_color(addon.hud_color)
+					end
 				end
 			end
 		})
@@ -422,6 +548,11 @@ return "hce_hud",{
 					local icon = data.icon
 					local amount = data.amount
 					addon.frag_text:set_text(string.format("%i",amount))
+					if amount <= 0 then 
+						addon.grenade_bar_fill:set_color(addon.hud_color_empty)
+					else
+						addon.grenade_bar_fill:set_color(addon.hud_color)
+					end
 				end
 			end
 		})
