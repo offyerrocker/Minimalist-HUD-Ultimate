@@ -521,10 +521,10 @@ function MHUDUCore:LoadAddons()
 					managers.localization:add_localized_strings(loc_strings)
 					
 					local potential_funcs = {
-						"create_func",
-						"register_func",
+						"create_func"
+--,						"register_func",
 						--"update_func", --optional, so it does not warrant a warning if missing
-						"destroy_func"
+--						"destroy_func"
 					}
 					
 					local missing_funcs = {}

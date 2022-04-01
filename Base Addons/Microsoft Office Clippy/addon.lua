@@ -5,7 +5,7 @@ return addon_id,{
 	name = "Microsoft Office Clippy",
 	desc = "The smart assistant from Microsoft Office",
 	autodetect_assets = true,
-	layer = 1,
+	layer = 999,
 	categories = {
 		"misc"
 	},
@@ -231,7 +231,7 @@ return addon_id,{
 		
 		local clippy_text = speech_panel:text({
 			name = "clippy_text",
-			text = "whomst've",
+			text = "",
 			color = Color.blue,
 			font = addon.font_name,
 			font_size = addon.font_size

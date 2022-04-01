@@ -22,7 +22,8 @@ return "runescapeinventory",{
 	y_margin = 6,
 	create_func = function(addon,parent_panel)
 		local inventory_panel = parent_panel:panel({
-			name = "inventory_panel"
+			name = "inventory_panel",
+			y = 64
 		})
 		addon.inventory_panel = inventory_panel
 		local equipment_panel = inventory_panel:panel({
