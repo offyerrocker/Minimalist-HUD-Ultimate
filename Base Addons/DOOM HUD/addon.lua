@@ -13,6 +13,8 @@ return addon_id,{
 		"ammo",
 		"throwables"
 	},
+	_update_t = 0,
+	update_interval = 1,
 	portrait_size = 64,
 	get_rect = function(addon,name,hurt_level)
 		local size = addon.portrait_size
@@ -47,13 +49,19 @@ return addon_id,{
 		GOD = {1,5}
 	},
 	DAMAGE_TIERS = 4, --5, technically, except we count from 0
+	lookat_angle_threshold = 45,
+	hit_indicator_duration = 2,
 	health_low_threshold = 0.5,
 	hud_atlas_name = "guis/textures/mhudu/doom_hud_atlas",
 	ver_offset = 16,
 	font_size = 56,
 	font_y = 24,
 	font_size = 24,
-	
+	info = {
+		health_current = 0,
+		health_total = 1,
+		hit_indicators = {}
+	},
 	create_func = function(addon,parent_panel)
 	
 		for font_name,font_data in pairs(addon.fake_font_data) do 
@@ -312,6 +320,8 @@ return addon_id,{
 			callback = function(i,data,...)
 				if i == HUDManager.PLAYER_PANEL and data.total ~= 0 then 
 					addon.health_text:set_text(string.format("%i%%",math.round(100 * data.current/data.total)))
+					addon.info.health_current = data.current
+					addon.info.health_total = data.total
 				end
 			end
 		})
@@ -349,6 +359,10 @@ return addon_id,{
 			end
 		})
 		
+		Hooks:PostHook(HUDHitDirection,"_add_hit_indicator","mhudu_doomhud_playerhitindicator",function(self,damage_origin, damage_type, fixed_angle)
+			table.insert(addon.info.hit_indicators,{damage_origin = damage_origin,damage_type = damage_type,fixed_angle = fixed_angle,start_t = Application:time()})
+		end)
+
 	end,
 	destroy_func = function(addon)
 		MHUDU:RemoveListener("set_criminal_health","mhudu_doomhud_criminalhealthchanged")
@@ -357,6 +371,116 @@ return addon_id,{
 		MHUDU:RemoveListener("set_criminal_grenades_amount","mhudu_doomhud_criminalgrenadeschanged")
 	end,
 	update_func = function(addon,t,dt)
+		local player = managers.player:local_player()
+		local has_set_doomface = false
+
+		if alive(player) then 
+			local state = player:movement():current_state()
+			if player:character_damage()._invulnerable or player:character_damage()._god_mode then 
+				has_set_doomface = true
+				addon.set_doomface(addon,"GOD")
+				addon._update_t = t + addon.update_interval
+			end
+
+			if state._shooting_t and (t - state._shooting_t >= 2) then 
+				addon.set_doomface(addon,"EVL")
+				addon._update_t = t + addon.update_interval
+				has_set_doomface = true
+			end
+				
+			local hit_indicator_duration = addon.hit_indicator_duration
+			for i=#addon.info.hit_indicators,1,-1 do 
+				local hit_indicator = addon.info.hit_indicators[i]
+				if hit_indicator.start_t + hit_indicator_duration < t then 
+					table.remove(addon.info.hit_indicators,i)
+					hit_indicator = nil
+				elseif not has_set_doomface then 
+					--always use latest hit indicator for doom's indicator
+					if hit_indicator.damage_origin and hit_indicator.source ~= player then
+						local angle_threshold = addon.lookat_angle_threshold
+						local player_aim = player:movement():m_head_rot():yaw() or 0
+				
+						if hit_indicator.source ~= player then 
+							if hit_indicator.damage_origin then 
+								local angle_to = addon.angle_from(hit_indicator.damage_origin,player:position())
+								angle_to = ((90 + angle_to - player_aim) % 360) - 180
+								if angle_to > angle_threshold then 
+									addon.set_doomface(addon,"KILL_TL")
+									has_set_doomface = true
+								elseif angle_to < -angle_threshold then 
+									addon.set_doomface(addon,"KILL_TR")
+									has_set_doomface = true
+								else 
+									addon.set_doomface(addon,"KILL")
+								end
+							end
+						end
+					end
+				end
+			end
+
+			if (not has_set_doomface) and (addon._update_t < t) then 
+				addon._update_t = t + addon.update_interval
+				local r_doomface_direction = math.random()
+				if r_doomface_direction < 0.33 then 
+					addon.set_doomface(addon,"TL",nil,true)
+				elseif r_doomface_direction > 0.66 then 
+					addon.set_doomface(addon,"TR",nil,true)
+				else
+					addon.set_doomface(addon,"ST",nil,true)
+				end
+			end
+		end
+	end,
+	angle_from = function(a,b,c,d) -- converts to angle with ranges (-180 , 180); for result range 0-360, do +180 to result
+		a = a or "nil"
+		b = b or "nil"
+		c = c or "nil"
+		d = d or "nil"
+		local function do_angle(x1,y1,x2,y2)
+			local angle = 0
+			local x = x2 - x1 --x diff
+			local y = y2 - y1 --y diff
+			if x ~= 0 then 
+				angle = math.atan(y / x) % 180
+				if y == 0 then 
+					if x > 0 then 
+						angle = 180 --right
+					else
+						angle = 0 --left 
+					end
+				elseif y > 0 then 
+					angle = angle - 180
+				end
+			else
+				if y > 0 then
+					angle = 270 --up
+				else
+					angle = 90 --down
+				end
+			end
+			
+			return angle
+		end
+		local vectype = type(Vector3())
+		if (type(a) == vectype) and (type(b) == vectype) then  --vector pos diff
+			return do_angle(a.x,a.y,b.x,b.y)
+		elseif (type(a) == "number") and (type(b) == "number") and (type(c) == "number") and (type(d) == "number") then --manual x/y pos diff
+			return do_angle(a,b,c,d)
+		else
+			return
+		end
+	end,
+	set_doomface = function(addon,name,hurt_level,skip_interval)
+		name = name or "ST"
+		local doomguy_portrait = addon.doomguy_portrait
+		if not hurt_level then 
+			hurt_level = math.round(1 - (addon.info.health_current / addon.info.health_total)) * addon.DAMAGE_TIERS
+		end
+		doomguy_portrait:set_image(addon.face_atlas_name,unpack(addon.get_rect(addon,name,hurt_level)))
+		if not skip_interval then 
+			addon._update_t = Application:time() + 2
+		end
 	end,
 	fake_font_data = {
 		digits_1 = {
