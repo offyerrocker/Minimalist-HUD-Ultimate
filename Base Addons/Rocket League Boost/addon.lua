@@ -2,7 +2,7 @@ return "rocketleagueboost",{
 	name = "Microsoft Office Clippy",
 	desc = "The virtual assistant from Microsoft Office",
 	autodetect_assets = true,
-	layer = 999,
+	layer = 765,
 	categories = {
 		"misc"
 	},

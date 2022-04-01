@@ -441,17 +441,19 @@ return "hce_hud",{
 		end
 		
 		local pm = managers.player
-		local peer_id = managers.network:session():local_peer():id()
-		
-		local grenades_amount = pm:get_grenade_amount(peer_id)
-		
-		if grenades_amount == 0 and pm:has_grenade(peer_id) then 
-			addon.indicator_no_grenades:set_alpha(flash_alpha)
-		end
 		
 		
 		local player = pm:local_player()
 		if alive(player) then 
+		
+			local peer_id = managers.network:session():local_peer():id()
+			
+			local grenades_amount = pm:get_grenade_amount(peer_id)
+			
+			if grenades_amount == 0 and pm:has_grenade(peer_id) then 
+				addon.indicator_no_grenades:set_alpha(flash_alpha)
+			end
+			
 			local equipped_weapon = player:inventory():equipped_unit()
 			local weapon_base = alive(equipped_weapon) and equipped_weapon:base()
 			if weapon_base then

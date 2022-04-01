@@ -2,7 +2,7 @@ _G.MHUDUCore = MHUDUCore or {}
 
 --init mod values
 do 
-	local settings_file_name = "minimalist_hud_ultimate.txt"
+	local settings_file_name = "minimalist_hud_ultimate.json"
 	local modpath = MHUDUCore:GetPath()
 	MHUDUCore._mod_path = modpath
 	MHUDUCore._save_path = SavePath .. settings_file_name
@@ -14,7 +14,7 @@ do
 --	MHUDUCore._localization
 	MHUDUCore._addons = {} --see included addons for templates/examples
 	MHUDUCore.default_settings = {
-		minimalism_countdown_enabled = false,
+		minimalism_countdown_enabled = true,
 		minimalism_countdown_interval = 300, --5min
 		addon_randomization_weighted_mode = true,
 		addon_save_data = {},

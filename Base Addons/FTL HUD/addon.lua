@@ -2,7 +2,7 @@ return "ftlhud",{
 	name = "FTL HUD",
 	desc = "Shows FTL-styled crewmember health",
 	autodetect_assets = true,
-	layer = 6,
+	layer = 60,
 	categories = {
 		"team_health"
 	},

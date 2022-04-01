@@ -1,23 +1,24 @@
-return "spaceengineersmeters",{
-	name = "Space Engineers HUD",
-	desc = "Survival HUD from Space Engineers",
+return "ffxiv_limsa",{
+	name = "FFXIV Map",
+	desc = "Map of Limsa Lominsa",
 	autodetect_assets = true,
-	layer = -1,
+	layer = -5,
 	categories = {
 		"misc" --nonfunctional; static image only
 	},
-	texture = "guis/textures/mhudu/spaceengineershud",
+	texture = "guis/textures/mhudu/limsa_map",
 	create_func = function(addon,parent_panel)
 		local scale = 0.75
 		
 		local bitmap = parent_panel:bitmap({
 			name = "bitmap",
 			layer = 1,
-			texture = addon.texture,
-			x = 250
+			y = 120,
+			alpha = 0.66,
+			texture = addon.texture
 		})
 		bitmap:set_size(bitmap:w() * scale, bitmap:h() * scale)
-		bitmap:set_bottom(parent_panel:bottom() - 250)
+		bitmap:set_right(parent_panel:w())
 		addon.bitmap = bitmap
 	end
 }
