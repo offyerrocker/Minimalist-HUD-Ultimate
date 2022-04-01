@@ -2,7 +2,7 @@ return "shiggy",{
 	name = "Miyamoto Shigeru",
 	desc = "The legendary game designer, Miyamoto Shigeru.",
 	autodetect_assets = true,
-	layer = -1,
+	layer = 100,
 	categories = {
 		"misc"
 	},

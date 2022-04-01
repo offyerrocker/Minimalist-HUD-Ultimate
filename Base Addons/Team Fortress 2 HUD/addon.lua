@@ -2,7 +2,7 @@ return "teamfortress2hud",{
 	name = "Team Fortress 2 HUD",
 	desc = "Health, Ammo, and Minimalism Timer counter for Team Fortress 2.",
 	autodetect_assets = true,
-	layer = 1,
+	layer = 3,
 	categories = {
 		"health",
 		"ammo"

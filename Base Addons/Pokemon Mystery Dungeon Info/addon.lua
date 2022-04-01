@@ -67,7 +67,8 @@ return addon_id,{
 		local feed_panel_h = 100
 		
 		local x_margin = feed_panel_w * x_margin_ratio
-		local y = parent_panel:bottom() - (parent_h * y_margin_ratio)
+		local feed_panel_x = x_margin + 100
+		local feed_panel_y = parent_panel:bottom() - (parent_h * y_margin_ratio)
 		
 		local bg_h = feed_panel_h
 		local bg_bookend_w = bg_h * segment_ratio
@@ -78,8 +79,8 @@ return addon_id,{
 		
 		local feed_panel = parent_panel:panel({
 			name = "feed_panel",
-			x = x_margin,
-			y = y,
+			x = feed_panel_x,
+			y = feed_panel_y,
 			w = feed_panel_w,
 			h = feed_panel_h
 		})
@@ -148,6 +149,37 @@ return addon_id,{
 		
 		addon.get_weapon_name(addon,1)
 		addon.get_weapon_name(addon,2)
+		
+		Hooks:PostHook(PlayerDamage,"on_downed","mhudu_pkmdr_ondowned",function(self)
+			local player_name = managers.network.account:username()
+			local player_color = Color.yellow
+			local substrings = {
+				{s = "Oh no! ",color = nil},
+				{s = player_name,color = player_color},
+				{s = " was defeated!",color = nil}
+			}
+			
+			local color_data = {}
+			local s_all = ""
+			local c = 0
+			for i,v in ipairs(substrings) do 
+				local str = v.s
+				local col = v.color
+				s_all = s_all .. str
+				local s_start = c
+				local s_end = s_start + utf8.len(str)
+				if col then
+					table.insert(color_data,{
+						s_start = s_start,
+						s_end = s_end,
+						color = col
+					})
+				end
+				c = s_end
+			end
+			
+			addon.add_text(addon,s_all,color_data)
+		end)
 		
 		--[[
 		Hooks:PostHook(TeamAIDamage,"_die","mhudu_pkmdr_teamai_on_death",function(self)
@@ -461,6 +493,7 @@ return addon_id,{
 		if alive(player_unit) then 
 --			player_unit:character_damage():remove_listener("mhudu_pkmdr_on_player_death")
 		end
+		Hooks:RemovePostHook("mhudu_pkmdr_ondowned")
 		Hooks:RemovePostHook("mhudu_pkmdr_teammate_state_change")
 	end,
 --	update_func = function(addon,t,dt) end,
