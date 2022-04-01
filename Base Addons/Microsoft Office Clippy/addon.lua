@@ -3,7 +3,7 @@
 local addon_id = "clippit"
 return addon_id,{
 	name = "Microsoft Office Clippy",
-	desc = "The smart assistant from Microsoft Office",
+	desc = "The virtual assistant from Microsoft Office",
 	autodetect_assets = true,
 	layer = 999,
 	categories = {
@@ -67,7 +67,7 @@ return addon_id,{
 			"LookUpRight",
 			"GetTechy",
 			"Print",
-			"GetWizardy",
+--			"GetWizardy",
 			"CheckingSomething",
 			"Hearing_1",
 			"LookDown",
@@ -115,7 +115,7 @@ return addon_id,{
 			"Congratulate",
 			"GetTechy",
 			"Print",
-			"GetWizardy",
+--			"GetWizardy",
 			"CheckingSomething",
 			"Hearing_1",
 			"LookDown",
@@ -134,7 +134,6 @@ return addon_id,{
 			"IdleHeadScratch",
 			"IdleAtom",
 			"Save",
-			"SendMail",
 			"LookUp",
 			"GetAttention",
 			"Alert",
@@ -158,6 +157,7 @@ return addon_id,{
 			up = "GestureUp"
 		},
 		leave = {
+			"SendMail",
 			"GoodBye"
 		},
 		arrive = {
@@ -221,7 +221,8 @@ return addon_id,{
 		
 		local speech_panel = parent_panel:panel({
 			name = "speech_panel",
-			layer = 2
+			layer = 2,
+			visible = false
 		})
 		local speech_bg = speech_panel:bitmap({
 			name = "speech_bg",
@@ -231,7 +232,8 @@ return addon_id,{
 		
 		local clippy_text = speech_panel:text({
 			name = "clippy_text",
-			text = "",
+			text = "whomst've",
+			wrap = true,
 			color = Color.blue,
 			font = addon.font_name,
 			font_size = addon.font_size

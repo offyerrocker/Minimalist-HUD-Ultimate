@@ -2,7 +2,7 @@
 --management
 
 Hooks:PreHook(HUDTeammate,"remove_panel","MHUDU_hudteammate_removepanel",function(self,weapons_panel,...)
-	MHUDU:teammate_remove_panel(weapons_panel,...)
+	MHUDU:teammate_remove_panel(self._id,weapons_panel,...)
 end)
 
 Hooks:PostHook(HUDTeammate,"add_panel","MHUDU_hudteammate_addpanel",function(self,...)

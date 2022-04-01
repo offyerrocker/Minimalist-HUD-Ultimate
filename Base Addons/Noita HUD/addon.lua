@@ -1,12 +1,12 @@
-return "spaceengineersmeters",{
-	name = "Space Engineers HUD",
-	desc = "Survival HUD from Space Engineers",
+return "noitahud",{
+	name = "Noita HUD",
+	desc = "Wands HUD from Noita",
 	autodetect_assets = true,
-	layer = -1,
+	layer = -10,
 	categories = {
 		"misc" --nonfunctional; static image only
 	},
-	texture = "guis/textures/mhudu/spaceengineershud",
+	texture = "guis/textures/mhudu/noita_hud",
 	create_func = function(addon,parent_panel)
 		local scale = 0.75
 		
@@ -17,7 +17,6 @@ return "spaceengineersmeters",{
 			x = 0
 		})
 		bitmap:set_size(bitmap:w() * scale, bitmap:h() * scale)
-		bitmap:set_bottom(parent_panel:bottom() - 200)
 		addon.bitmap = bitmap
 	end
 }

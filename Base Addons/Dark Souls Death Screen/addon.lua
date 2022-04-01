@@ -160,7 +160,5 @@ return "darksoulsdeath",{
 	end,
 	destroy_func = function(addon)
 		Hooks:RemovePostHook("mhudu_darksouls_ondowned")
-	end,
-	update_func = function(addon,t,dt)
 	end
 }
