@@ -590,7 +590,7 @@ function MHUDUCore:LoadAddons()
 	for id,addon_data in pairs(self._addons) do 
 		local user_data = addon_data.user_data
 		local addon_path = addon_data.path
-		if user_data.autodetect_assets then 
+		if self:IsAddonEnabled(id) and user_data.autodetect_assets then 
 --			self:Log("Checking asset loading for addon " .. tostring(id))
 			local assets_folder_name = user_data.assets_folder_name or self._assets_folder_name
 			
