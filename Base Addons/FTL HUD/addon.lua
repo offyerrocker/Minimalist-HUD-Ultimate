@@ -87,8 +87,8 @@ return "ftlhud",{
 			y = addon.hud_y
 		})
 		addon.ftl_panel = ftl_panel
-	end,
-	register_func = function(addon)
+		
+		--in this case, these should be added asap such that teammate hud elements are ready to go whenever the addon is actually activated and shown
 		MHUDU:AddListener("add_teammate_panel","mhudu_ftlhud_addteammate",{callback=callback(addon,addon,"add_teammate")})
 		MHUDU:AddListener("remove_teammate_panel","mhudu_ftlhud_removeteammate",{callback=callback(addon,addon,"remove_teammate")})
 		MHUDU:AddListener("set_criminal_name","mhudu_ftlhud_setteammatename",{callback=callback(addon,addon,"set_teammate_name")})
