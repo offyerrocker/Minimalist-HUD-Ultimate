@@ -264,4 +264,3 @@ return "mario64",{
 		Hooks:RemovePostHook("mhudu_mariohud_onsecureloot")
 	end
 }
---asset from Megadardery, KoopaTroopa76, LewisTehCat28

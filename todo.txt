@@ -1,7 +1,6 @@
 todo:
 	- option to hide vanilla hud 
 	
-	- only load assets for enabled addons
 	- go over enabled/disabled mid-heist behavior
 		- require restart to affect changes? or only for enabling addons? <-- probably this
 		- destroy addon panels and call unregister listeners when addon is to be removed (ie when user disables it)
@@ -10,14 +9,14 @@ todo:
 		- re-check categories at any change (user changing any addon toggles)
 	- toggle/button for manually enabling/disabling an addon
 
+	- develop clippy more
+		- speech text
+		- movement
 
 post-release:
 	- auto-updater for addons
 		- hook system for advanced addons to allow beardlib auto-updating addons
 		-backport to ach
-
-
-
 
 
 
@@ -71,18 +70,13 @@ concepts:
 		general concepts:
 			monster hunter
 			deep rock galactic?
-			miyamoto and gunicorn (rdr horse)
 			untitled goose game goose?
 			the division
-			clippy
-			subnautica 
 			dishonored
 			gungeon
 			gtfo
 			hunt showdown
 			icarus?
-			noita
-			terraria?
 			l4d/other source games?
 			apex legends?
 			don't starve together
@@ -93,25 +87,9 @@ concepts:
 			--when you use a doctor bag with 0 downs, show fallout 4 "everyone disliked that" text
 			
 		from the video: https://www.youtube.com/watch?v=jAymJW63PLk
-			duke nukem
 		
 		new elements:
-						(DONE) "chalice requires runes"
 			persona 4 date/time
 			ffxiv team counter
 				-level up noise https://www.youtube.com/watch?v=DAHx3yUEnGU
-			smb64 lives counter
-			halo ce ammo counter?
 			tf2 mission timer
-			dark souls "you died"
-			runescape inventory
-			
-		returning elements:
-			tf2 health
-			lego star wars character
-			fallout 3 vats
-
-		undecided:
-			lego star wars stud counter for money?
-				- con: relies on upper money limit
-		
