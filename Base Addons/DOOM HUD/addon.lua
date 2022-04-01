@@ -351,6 +351,10 @@ return addon_id,{
 		
 	end,
 	destroy_func = function(addon)
+		MHUDU:RemoveListener("set_criminal_health","mhudu_doomhud_criminalhealthchanged")
+		MHUDU:RemoveListener("set_criminal_armor","mhudu_doomhud_criminalarmorchanged")
+		MHUDU:RemoveListener("set_criminal_ammo_data","mhudu_doomhud_criminalammochanged")
+		MHUDU:RemoveListener("set_criminal_grenades_amount","mhudu_doomhud_criminalgrenadeschanged")
 	end,
 	update_func = function(addon,t,dt)
 	end,
