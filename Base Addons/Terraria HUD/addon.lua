@@ -1,4 +1,4 @@
-return "terraria",{
+return "terrariahotbar",{
 	name = "Terraria Hotbar",
 	desc = "Item Hotbar from Terraria",
 	autodetect_assets = true,
@@ -12,8 +12,8 @@ return "terraria",{
 			name = "bitmap",
 			layer = 1,
 			texture = addon.texture,
-			x = 500,
-			y = 80
+			x = 400,
+			y = 10
 		})
 		addon.bitmap = bitmap
 	end
