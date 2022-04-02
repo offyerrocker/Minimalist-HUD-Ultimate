@@ -7,6 +7,8 @@
 	"menu_mhudu_enable_minimalism_countdown_desc" : "If true, all addons start out disabled and are slowly enabled over time.",
 	"menu_mhudu_set_minimalism_countdown_interval_title" : "Addon Addition Interval",
 	"menu_mhudu_set_minimalism_countdown_interval_desc" : "The number of seconds before each addon is enabled in Speedrun Mode.",
+	"menu_mhudu_enable_randomization_weighted_mode_title" : "Weight Randomization by Addon Type",
+	"menu_mhudu_enable_randomization_weighted_mode_desc" : "If true, order will be weighted to give a more even distribution of addon types. If false, order will be simply random.",
 	"menu_mhudu_addon_generic_unknown_name" : "Unknown Addon",
 	"menu_mhudu_addon_generic_unknown_desc" : "An unlabeled addon for MHUDU",
 	"menu_mhudu_addon_enable_generic_title" : "Enable this Addon",

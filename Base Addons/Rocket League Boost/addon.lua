@@ -1,6 +1,6 @@
 return "rocketleagueboost",{
-	name = "Microsoft Office Clippy",
-	desc = "The virtual assistant from Microsoft Office",
+	name = "Rocket League Boost",
+	desc = "Boost Meter from Rocket League",
 	autodetect_assets = true,
 	layer = 765,
 	categories = {

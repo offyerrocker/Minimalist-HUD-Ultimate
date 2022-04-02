@@ -10,13 +10,11 @@ do
 	MHUDUCore._base_addons_path = modpath .. "Base Addons/"
 	MHUDUCore._addons_path = SavePath .. "MHUDU Addons/"
 	MHUDUCore._default_localization_path = "localization/en.json"
-	MHUDUCore._menu_path = modpath .. "menu/options.json"
---	MHUDUCore._localization
 	MHUDUCore._addons = {} --see included addons for templates/examples
 	MHUDUCore.default_settings = {
 		minimalism_countdown_enabled = true,
 		minimalism_countdown_interval = 300, --5min
-		addon_randomization_weighted_mode = true,
+		addon_randomization_weighted_mode = false,
 		addon_save_data = {},
 		enabled_addons = {}
 	}
@@ -78,9 +76,15 @@ Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu
 	
 	BeardLib:AddUpdater("MHUDU_Update",callback(MHUDUCore,MHUDUCore,"Update"))
 	
-	MenuCallbackHandler.callback_mhudu_enable_minimalism = function(self,item)
+	MenuCallbackHandler.callback_mhudu_enable_minimalism_countdown = function(self,item)
 		local value = item:value() == "on"
 		MHUDUCore.settings.minimalism_countdown_enabled = value
+		MHUDUCore:SaveSettings()
+	end
+	
+	MenuCallbackHandler.callback_mhudu_enable_randomization_weighted_mode = function(self,item)
+		local value = item:value() == "on"
+		MHUDUCore.settings.addon_randomization_weighted_mode = value
 		MHUDUCore:SaveSettings()
 	end
 
@@ -88,25 +92,6 @@ Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu
 		MHUDUCore.settings.minimalism_countdown_interval = tonumber(item:value())
 		MHUDUCore:SaveSettings()
 	end
---[[
-
-	MenuCallbackHandler.callback_modtemplate_multiplechoice = function(self,item)
-		MyNewModGlobal.settings.multiplechoice_setting = tonumber(item:value())
-		MyNewModGlobal:Save()
-	end
-
-	MenuCallbackHandler.callback_modtemplate_button = function(self,item)
-		--on menu button click: do nothing in particular
-	end
-	
-	MenuCallbackHandler.callback_modtemplate_keybind_2 = function(self)
-		--on keybind press: do nothing in particular
-	end	
-	
-	MenuCallbackHandler.callback_modtemplate_back = function(this)
-		--on menu exit: do nothing in particular
-	end
-	--]]
 	
 	MHUDUCore:CheckCreateAddonFolder()
 	
@@ -114,7 +99,6 @@ Hooks:Add( "MenuManagerInitialize", "MenuManagerInitialize_MHUDU", function(menu
 	MHUDUCore:LoadAddons()
 	
 	MHUDUCore:LoadSettings()
---	MenuHelper:LoadFromJsonFile(MHUDUCore._menu_path, MHUDUCore, MHUDUCore.settings)
 end)
 
 Hooks:Add("MenuManagerSetupCustomMenus", "MenuManagerSetupCustomMenus_MHUDU", function(menu_manager, nodes)
@@ -123,16 +107,18 @@ Hooks:Add("MenuManagerSetupCustomMenus", "MenuManagerSetupCustomMenus_MHUDU", fu
 end)
 
 Hooks:Add("MenuManagerPopulateCustomMenus", "MenuManagerPopulateCustomMenus_MHUDU", function(menu_manager, nodes)
+
 	
 	MenuHelper:AddToggle({
 		id = "mhudu_enable_minimalism_countdown",
 		title = "menu_mhudu_enable_minimalism_countdown_title",
 		desc = "menu_mhudu_enable_minimalism_countdown_desc",
-		callback = "callback_mhudu_enable_minimalism",
+		callback = "callback_mhudu_enable_minimalism_countdown",
 		value = MHUDUCore.settings.minimalism_countdown_enabled,
 		menu_id = MHUDUCore.menu_data.menu_ids.main,
-		priority = 2
+		priority = 3
 	})
+	
 	MenuHelper:AddSlider({
 		id = "mhudu_set_minimalism_countdown_interval",
 		title = "menu_mhudu_set_minimalism_countdown_interval_title",
@@ -145,6 +131,16 @@ Hooks:Add("MenuManagerPopulateCustomMenus", "MenuManagerPopulateCustomMenus_MHUD
 		default_value = MHUDUCore.default_settings.minimalism_countdown_interval,
 		menu_id = MHUDUCore.menu_data.menu_ids.main,
 		show_value = true,
+		priority = 2
+	})
+		
+	MenuHelper:AddToggle({
+		id = "mhudu_enable_randomization_weighted_mode",
+		title = "menu_mhudu_enable_randomization_weighted_mode_title",
+		desc = "menu_mhudu_enable_randomization_weighted_mode_desc",
+		callback = "callback_mhudu_enable_randomization_weighted_mode",
+		value = MHUDUCore.settings.addon_randomization_weighted_mode,
+		menu_id = MHUDUCore.menu_data.menu_ids.main,
 		priority = 1
 	})
 	
@@ -308,11 +304,13 @@ function MHUDUCore:OnGameStarted()
 		self:StartMinimalismCountdown()
 	else
 		for addon_id,addon_data in pairs(self._addons) do 
-			if alive(addon_data.panel) then 
-				addon_data.panel:show()
-			end
-			if addon_data.user_data.register_func then 
-				addon_data.user_data.register_func(addon_data.user_data)
+			if self:IsAddonEnabled(addon_id) then 
+				if alive(addon_data.panel) then 
+					addon_data.panel:show()
+				end
+				if addon_data.user_data.register_func then 
+					addon_data.user_data.register_func(addon_data.user_data)
+				end
 			end
 		end
 	end

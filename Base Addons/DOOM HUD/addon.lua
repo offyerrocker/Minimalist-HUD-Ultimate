@@ -79,7 +79,7 @@ return addon_id,{
 			w = 1280,
 			h = 128
 		})
-		bg_subpanel:set_bottom(parent_panel:bottom() - 16)
+		bg_subpanel:set_bottom(parent_panel:bottom())
 		addon.bg_subpanel = bg_subpanel
 		local bg_main = bg_subpanel:bitmap({
 			name = "bg_main",

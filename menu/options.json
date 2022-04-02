@@ -1,8 +1,0 @@
-{
-	"menu_id" : "menu_mhudu_main",
-	"parent_menu_id" : "blt_options",
-	"title" : "menu_mhudu_main_title",
-	"DISABLED_back_callback" : "callback_mhudu_close",
-	"items" : [
-	]
-}

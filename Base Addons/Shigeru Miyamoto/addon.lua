@@ -24,6 +24,6 @@ return "shiggy",{
 			rotation = -30,
 			x = 100
 		})
-		portrait:set_bottom(parent_panel:h() + 40)
+		portrait:set_bottom(parent_panel:h() + 56)
 	end
 }

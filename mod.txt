@@ -33,10 +33,6 @@
 			"script_path" : "lua/ingamewaitingforplayers.lua"
 		},
 		{
-			"hook_id" : "lib/managers/menumanager",
-			"script_path" : "lua/menumanager.lua"
-		},
-		{
 			"hook_id" : "lib/managers/hudmanagerpd2",
 			"script_path" : "lua/hudmanagerpd2.lua"
 		},

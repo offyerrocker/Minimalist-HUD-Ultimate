@@ -3,5 +3,5 @@
 		<loc file="en.json" language="english" />
 	</Localization>
 	
-	<AssetUpdates id="36309" version="0.0.2" provider="modworkshop" install_directory = "mods/"/>
+	<AssetUpdates id="36309" version="0.0.3" provider="modworkshop" install_directory = "mods/"/>
 </mod>
