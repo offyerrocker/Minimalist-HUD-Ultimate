@@ -163,7 +163,7 @@ return addon_id,{
 			local s_all = ""
 			local c = 0
 			for i,v in ipairs(substrings) do 
-				local str = v.s
+				local str = tostring(v.s)
 				local col = v.color
 				s_all = s_all .. str
 				local s_start = c
@@ -212,7 +212,7 @@ return addon_id,{
 			local s_all = ""
 			local c = 0
 			for i,v in ipairs(substrings) do 
-				local str = v.s
+				local str = tostring(v.s)
 				local col = v.color
 				s_all = s_all .. str
 				local s_start = c
@@ -247,6 +247,7 @@ return addon_id,{
 					local name_provider = HopLib:name_provider()
 					unit_name = name_provider:name_by_id(tweak_table)
 				end
+				unit_name = unit_name or "Enemy"
 				
 				
 				local weapon_unit = attack_data.weapon_unit
@@ -300,7 +301,7 @@ return addon_id,{
 					local s_all = ""
 					local c = 0
 					for i,v in ipairs(substrings) do 
-						local str = v.s
+						local str = tostring(v.s)
 						local col = v.color
 						s_all = s_all .. str
 						local s_start = c
@@ -329,7 +330,7 @@ return addon_id,{
 					local s_all = ""
 					local c = 0
 					for i,v in ipairs(substrings) do 
-						local str = v.s
+						local str = tostring(v.s)
 						local col = v.color
 						s_all = s_all .. str
 						local s_start = c
@@ -355,7 +356,7 @@ return addon_id,{
 					local s_all = ""
 					local c = 0
 					for i,v in ipairs(substrings) do 
-						local str = v.s
+						local str = tostring(v.s)
 						local col = v.color
 						s_all = s_all .. str
 						local s_start = c
@@ -431,7 +432,7 @@ return addon_id,{
 				local s_all = ""
 				local c = 0
 				for i,v in ipairs(substrings) do 
-					local str = v.s
+					local str = tostring(v.s)
 					local col = v.color
 					s_all = s_all .. str
 					local s_start = c
