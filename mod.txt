@@ -3,7 +3,7 @@
 	"description" : "Better than the best minimalist HUD out there",
 	"author" : "Offyerrocker",
 	"contact" : "Discord: Offyerrocker#3878",
-	"version" : "2",
+	"version" : "0.0.4",
 	"image" : "icon.png",
 	"blt_version" : 2,
 	"color" : "255 128 0",

@@ -82,7 +82,7 @@ return addon_id,{
 		local bar = box:rect({
 			name = "bar",
 			color = addon.ui_color,
-			w = 20 + math.random(16),
+			w = 36,
 			h = 5,
 			x = addon.bar_x,
 			y = 5 + h_pad,
@@ -191,12 +191,14 @@ return addon_id,{
 				end
 				
 				local autoaim = wpn_base:check_autoaim(fire_position,fire_direction,nil,true)
-				local unit = autoaim and autoaim.unit
-				if alive(unit) and unit:character_damage() then
+				local unit = autoaim and autoaim.unit or aim_unit
+				if alive(unit) and unit:character_damage() and not unit:character_damage():dead() then
 					local unit_position = unit:position()
 					local distance_to = math.max(mvector3.distance(player:position(),unit_position),1)
 					local current_camera = managers.viewport:get_current_camera()
 					local ws = MHUDU._ws
+					
+					local hp_r = unit:character_damage():health_ratio()
 					
 					vats_panel:show()
 					for _,name in pairs(addon.bodies) do 
@@ -212,13 +214,16 @@ return addon_id,{
 								local pos_x = screen_pos.x
 								local pos_y = screen_pos.y
 								
-								
 								--centering
 								local screen_unit_pos = ws:world_to_screen(current_camera,unit_position)
 								local screen_center_x = screen_unit_pos.x
 								local screen_center_y = screen_unit_pos.y
 								
 								local max_screen_distance = 36
+								
+								if hp_r then
+									box:child("bar"):set_w(hp_r * 36)
+								end
 								
 								if name == "Head" or name == "Spine" then 
 									if name == "Spine" then
