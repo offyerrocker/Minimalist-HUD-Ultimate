@@ -127,14 +127,14 @@ return "runescapeinventory",{
 			addon.layout_mission_equipment(addon)
 		end
 	end,
-	remove_mission_equipment = function(addon,i)
+	remove_mission_equipment = function(addon,i,id)
 		if i == HUDManager.PLAYER_PANEL then 
 			local equipment_panel = addon.equipment_panel
 			if not alive(equipment_panel) then 
 				return
 			end
 			
-			local panel = equipment_panel:child(id)
+			local panel = id and equipment_panel:child(id)
 			if alive(panel) then 
 				equipment_panel:remove(panel)
 			end
