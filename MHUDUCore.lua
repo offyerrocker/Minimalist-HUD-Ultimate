@@ -305,6 +305,7 @@ function MHUDUCore:OnGameStarted()
 	else
 		for addon_id,addon_data in pairs(self._addons) do 
 			if self:IsAddonEnabled(addon_id) then 
+				self:_ActivateAddon(addon_data)
 				if alive(addon_data.panel) then 
 					addon_data.panel:show()
 				end
@@ -413,12 +414,15 @@ end
 
 function MHUDUCore:ActivateAddon(id)
 	if id and self._addons[id] then
-		local addon_data = self._addons[id]
-		addon_data.active = true
-		addon_data.panel:show()
-		if addon_data.user_data.register_func then 
-			addon_data.user_data.register_func(addon_data.user_data)
-		end
+		self:_ActivateAddon(self._addons[id])
+	end
+end
+
+function MHUDUCore:_ActivateAddon(addon_data)
+	addon_data.active = true
+	addon_data.panel:show()
+	if addon_data.user_data.register_func then 
+		addon_data.user_data.register_func(addon_data.user_data)
 	end
 end
 
