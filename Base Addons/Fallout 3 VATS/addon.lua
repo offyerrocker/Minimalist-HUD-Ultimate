@@ -198,7 +198,16 @@ return addon_id,{
 					local current_camera = managers.viewport:get_current_camera()
 					local ws = MHUDU._ws
 					
-					local hp_r = unit:character_damage():health_ratio()
+					local dmg_ext = unit:character_damage()
+					local hp_r = 1
+					if dmg_ext then
+						if dmg_ext.health_ratio then
+							hp_r = dmg_ext:health_ratio() or hp_r
+						elseif dmg_ext._health_ratio then
+							-- annoyingly, sentry guns have a health_ratio defined but no corresponding getter to CopDamage:health_ratio()
+							hp_r = dmg_ext._health_ratio or hp_r
+						end
+					end
 					
 					vats_panel:show()
 					for _,name in pairs(addon.bodies) do 
