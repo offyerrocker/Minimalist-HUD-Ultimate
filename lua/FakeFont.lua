@@ -10,7 +10,7 @@ function FakeFont:init(data,name)
 		self.data = new_data
 		name = name or data.name
 		if name then 
-			FakeFont.fonts[data.name] = new_data
+			FakeFont.fonts[name] = new_data
 		end
 	end
 end
