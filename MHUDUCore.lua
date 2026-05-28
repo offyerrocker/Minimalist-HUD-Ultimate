@@ -445,8 +445,9 @@ function MHUDUCore:LoadAddons()
 --			self:Log("Added: " .. tostring(extension) .. " " .. tostring(file_path_no_extension) .. " " .. tostring(root_path) .. " " .. tostring(file_path))
 
 
-			--BLT.AssetManager:CreateEntry(Idstring(file_path_no_extension),ext_ids,root_path .. file_path) --alt loading method
-			BeardLib.managers.file:AddFile(ext_ids,Idstring(file_path_no_extension),root_path .. file_path)
+			--two different loading methods
+			BLT.AssetManager:CreateEntry(Idstring(file_path_no_extension),ext_ids,root_path .. file_path)
+			--BeardLib.Managers.File:AddFile(ext_ids,Idstring(file_path_no_extension),root_path .. file_path)
 			
 			if extension == "font" then 
 				managers.dyn_resource:load(ext_ids, Idstring(file_path_no_extension), DynamicResourceManager.DYN_RESOURCES_PACKAGE,
